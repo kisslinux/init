@@ -11,7 +11,7 @@ main() {
 
     for stage in /etc/runit/stages/*.sh; do
         # shellcheck disable=1090
-        . "$stage"
+        [ -r "$stage" ] && . "$stage"
     done
 }
 
