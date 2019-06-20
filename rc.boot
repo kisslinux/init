@@ -103,7 +103,7 @@ main() {
     }
 
     log "Checking filesystems..."; {
-        fsck -ATat
+        fsck -ATat noopts=_netdev
         [ $? -gt 1 ] && emergency_shell
     }
 
