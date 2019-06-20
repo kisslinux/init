@@ -6,6 +6,14 @@ log() {
     printf '\e[31;1m=>\e[m %s\n' "$@"
 }
 
+emergency_shell() {
+    printf '%s\n' "" \
+        "Init system encountered an error, starting emergency shell."
+        "When ready, type 'exit' to continue the boot."
+
+    /bin/sh -l
+}
+
 main() {
     log "Welcome to KISS $(uname -sr)!"
 
