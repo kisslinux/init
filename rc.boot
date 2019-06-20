@@ -1,7 +1,5 @@
 #!/bin/sh
 
-PATH=/usr/bin:/usr/sbin
-
 log() {
     printf '\e[31;1m=>\e[m %s\n' "$@"
 }
@@ -15,7 +13,7 @@ mnt() {
 }
 
 emergency_shell() {
-    printf '%s\n' "" \
+    log "" \
         "Init system encountered an error, starting emergency shell." \
         "When ready, type 'exit' to continue the boot."
 
@@ -23,6 +21,9 @@ emergency_shell() {
 }
 
 main() {
+    PATH=/usr/bin:/usr/sbin
+    old_ifs=$IFS
+
     log "Welcome to KISS $(uname -sr)!"
 
     log "Mounting pseudo filesystems..."; {
@@ -53,6 +54,52 @@ main() {
 
     log "Remounting rootfs as ro..."; {
         mount -o remount,ro / || emergency_shell
+    }
+
+    log "Activating encrypted devices (if any exist)..."; {
+        [ -e /etc/crypttab ] && {
+            exec 3<&0
+
+            # shellcheck disable=2086
+            while read -r name dev pass opts err; do
+                # Skip comments.
+                [ "${name##\#*}" ] || continue
+
+                # Break on invalid crypttab.
+                [ "$err" ] && {
+                    printf 'error: A valid crypttab has only 4 columns.\n'
+                    break
+                }
+
+                # Turn 'UUID=*' lines into device names.
+                [ "${dev##UUID*}" ] || dev=$(blkid -l -o device -t "$dev")
+
+                # Parse options by turning list into a pseudo array.
+                { IFS=,; set -f; set -- $opts; set +f; IFS=$old_ifs; }
+
+                copts="cryptsetup luksOpen"
+
+                # Create an argument list (no other way to do this in sh).
+                for opt; do case $opt in
+                    discard)            copts="$copts --allow-discards" ;;
+                    readonly|read-only) copts="$copts -r" ;;
+                    tries=*)            copts="$copts -T ${opt##*=}" ;;
+                esac; done
+
+                # If password is 'none', '-' or empty ask for it.
+                case $pass in
+                    none|-|"") $copts "$dev" "$name" <&3 ;;
+                    *)         $copts -d "$pass" "$dev" "$name" ;;
+                esac
+            done < /etc/crypttab
+
+            exec 3>&-
+
+            [ "$copts" ] && [ -x /bin/vgchance ] && {
+                log "Activating LVM devices for dm-crypt..."
+                vgchange --sysinit -a y || emergency_shell
+            }
+        }
     }
 
     log "Checking filesystems..."; {
