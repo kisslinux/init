@@ -47,9 +47,17 @@ main() {
     }
 
     # TODO: Handle uevents (do we need to do this?)
-    log "Starting mdev..."; {
-        printf '/bin/mdev\n' > /proc/sys/kernel/hotplug
-        mdev -s
+    log "Starting udev/mdev..."; {
+        if command -v udevd >/dev/null; then
+            udevd --daemon
+            udevadm trigger --action=add --type=subsystems
+            udevadm trigger --action=add --type=devices
+            udevadm settle
+
+        elif command -v mdev >/dev/null; then
+            printf '/bin/mdev\n' > /proc/sys/kernel/hotplug
+            mdev -s
+        fi
     }
 
     log "Remounting rootfs as ro..."; {
