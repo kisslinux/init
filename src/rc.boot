@@ -23,6 +23,7 @@ emergency_shell() {
 main() {
     PATH=/usr/bin:/usr/sbin
     old_ifs=$IFS
+    set -f
 
     log "Welcome to KISS $(uname -sr)!"
 
@@ -83,7 +84,9 @@ main() {
                 [ "${dev##UUID*}" ] || dev=$(blkid -l -o device -t "$dev")
 
                 # Parse options by turning list into a pseudo array.
-                { IFS=,; set -f; set -- $opts; set +f; IFS=$old_ifs; }
+                IFS=,
+                set -- $opts
+                IFS=$old_ifs
 
                 copts="cryptsetup luksOpen"
 
