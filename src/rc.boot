@@ -1,7 +1,7 @@
 #!/bin/sh
 
 log() {
-    printf '\e[31;1m=>\e[m %s\n' "$@"
+    printf '\033[31;1m=>\033[m %s\n' "$@"
 }
 
 mnt() {
