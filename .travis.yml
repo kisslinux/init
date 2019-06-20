@@ -1,2 +1,2 @@
 language: bash
-script:   shellcheck rc.boot
+script:   shellcheck src/*
