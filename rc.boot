@@ -13,6 +13,8 @@ main() {
         # shellcheck disable=1090
         [ -r "$stage" ] && . "$stage"
     done
+
+    log "Boot stage complete..."
 }
 
 main

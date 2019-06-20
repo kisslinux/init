@@ -19,3 +19,11 @@ find /run/sysctl.d \
            sysctl -p "$conf" ;;
     esac
 done
+
+log "Restricting dmesg if enabled..."
+
+case $(sysctl -n kernel.dmesg_restrict) in
+    1) chmod 0600 /var/log/dmesg.log ;;
+    *) chmod 0644 /var/log/dmesg.log ;;
+esac
+
