@@ -16,7 +16,7 @@ mnt() {
 
 emergency_shell() {
     printf '%s\n' "" \
-        "Init system encountered an error, starting emergency shell."
+        "Init system encountered an error, starting emergency shell." \
         "When ready, type 'exit' to continue the boot."
 
     /bin/sh -l
