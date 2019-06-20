@@ -73,6 +73,7 @@ main() {
         swapon -a || emergency_shell
     }
 
+    # From: https://github.com/Sweets/hummingbird/blob/master/etc/rc.init
     log "Seeding random..."; {
         if [ -f /var/random.seed ]; then
             cat /var/random.seed > /dev/urandom
@@ -90,6 +91,7 @@ main() {
             printf '%s\n' "$hostname" > /proc/sys/kernel/hostname
     }
 
+    # From: https://github.com/Sweets/hummingbird/blob/master/etc/rc.init
     log "Loading sysctl settings..."; {
         find /run/sysctl.d \
              /etc/sysctl.d \
