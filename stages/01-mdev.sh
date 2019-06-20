@@ -5,4 +5,3 @@ log "Starting mdev..."
 
 printf '/bin/mdev\n' > /proc/sys/kernel/hotplug
 mdev -s
-

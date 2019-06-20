@@ -13,4 +13,3 @@ ip link set up dev lo
 log "Setting hostname..."
 read -r hostname < /etc/hostname &&
     printf '%s\n' "$hostname" > /proc/sys/kernel/hostname
-
