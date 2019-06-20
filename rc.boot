@@ -52,8 +52,8 @@ main() {
     }
 
     log "Remounting rootfs as ro..."; {
-        mount -o remount,ro /
-    } || emergency_shell
+        mount -o remount,ro / || emergency_shell
+    }
 
     log "Checking filesystems..."; {
         fsck -ATat
@@ -61,16 +61,17 @@ main() {
     }
 
     log "Mounting rootfs rw..."; {
-        mount -o remount,rw /
-    } || emergency_shell
+        mount -o remount,rw / || emergency_shell
+    }
 
     log "Mounting all local filesystems..."; {
-        mount -at nosysfs,nonfs,nonfs4,nosmbfs,nocifs -O no_netdev
-    } || emergency_shell
+        mount -at nosysfs,nonfs,nonfs4,nosmbfs,nocifs -O no_netdev ||
+            emergency_shell
+    }
 
     log "Enabling swap..."; {
-        swapon -a
-    } || emergency_shell
+        swapon -a || emergency_shell
+    }
 
     log "Seeding random..."; {
         if [ -f /var/random.seed ]; then
