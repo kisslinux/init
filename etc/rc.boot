@@ -44,7 +44,6 @@ main() {
 
         mnt /dev/pts -o mode=0620,gid=5,nosuid,noexec -nt devpts     devpts
         mnt /dev/shm -o mode=1777,nosuid,nodev        -nt tmpfs      shm
-        mnt /sys/kernel/security                      -nt securityfs securityfs
     }
 
     log "Starting udev/mdev..."; {
@@ -147,7 +146,7 @@ main() {
     log "Setting hostname..."; {
         read -r hostname < /etc/hostname &&
             printf '%s\n' "$hostname" > /proc/sys/kernel/hostname
-    }
+    } 2>/dev/null
 
     # From: https://github.com/Sweets/hummingbird/blob/master/etc/rc.init
     log "Loading sysctl settings..."; {
@@ -174,7 +173,7 @@ main() {
             1) chmod 0600 /var/log/dmesg.log ;;
             *) chmod 0644 /var/log/dmesg.log ;;
         esac
-    }
+    } 2>/dev/null
 
     log "Boot stage complete..."
 }
