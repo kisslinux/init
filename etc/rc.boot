@@ -169,6 +169,8 @@ main() {
     }
 
     log "Restricting dmesg if enabled..."; {
+        dmesg > /var/log/dmesg.log
+
         case $(sysctl -n kernel.dmesg_restrict) in
             1) chmod 0600 /var/log/dmesg.log ;;
             *) chmod 0644 /var/log/dmesg.log ;;
