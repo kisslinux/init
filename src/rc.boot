@@ -47,7 +47,6 @@ main() {
         mnt /sys/kernel/security                      -nt securityfs securityfs
     }
 
-    # TODO: Handle uevents (do we need to do this?)
     log "Starting udev/mdev..."; {
         if command -v udevd >/dev/null; then
             udevd --daemon
@@ -55,6 +54,7 @@ main() {
             udevadm trigger --action=add --type=devices
             udevadm settle
 
+        # TODO: Handle uevents (do we need to do this?)
         elif command -v mdev >/dev/null; then
             printf '/bin/mdev\n' > /proc/sys/kernel/hotplug
             mdev -s
