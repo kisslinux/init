@@ -34,6 +34,16 @@ main() {
 
         sync
     }
+
+    log "Deactivating dmcrypt devices (if any exist)."; {
+        [ -x /bin/cryptsetup ] && [ -x /bin/dmsetup ] && {
+            dmsetup ls --target crypt \
+                       --exec "dmsetup info -c --noheadings -o open,name" |
+            while read -r drive; do
+                [ "${drive%%:*}" = "0" ] && cryptsetup close "${drive##*:}"
+            done
+        }
+    }
 }
 
 main
