@@ -12,6 +12,13 @@ mnt() {
     }
 }
 
+load_modules() {
+    find /sys -name modalias -type f -exec cat '{}' + | sort -u |
+    while read -r module; do
+        modprobe -ba "$module" 2>/dev/null
+    done
+}
+
 emergency_shell() {
     log "" \
         "Init system encountered an error, starting emergency shell." \
@@ -53,10 +60,22 @@ main() {
             udevadm trigger --action=add --type=devices
             udevadm settle
 
-        # TODO: Handle uevents (do we need to do this?)
         elif command -v mdev >/dev/null; then
             printf '/bin/mdev\n' > /proc/sys/kernel/hotplug
             mdev -s
+
+            for i in /sys/class/net/*/uevent; do
+                [ -f "$i" ] && printf add > "$i"
+            done
+
+            for i in /sys/bus/usb/devices/*; do
+                case "${i##*/}" in
+                    [0-9]*-[0-9]*) printf add > "$i/uevent"
+                esac
+            done
+
+            load_modules
+            load_modules
         fi
     }
 
