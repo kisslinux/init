@@ -19,12 +19,12 @@ main() {
     halt -w
 
     log "Sending TERM signal to all processes..."; {
-        pkill --inverse -s0,1 -TERM
+        pkill -v -s0,1 -TERM
         sleep 1
     }
 
     log "Sending KiLL signal to all processes..."; {
-        pkill --inverse -s0,1 -KILL
+        pkill -v -s0,1 -KILL
     }
 
     log "Unmounting filesystems and disabling swap..."; {
