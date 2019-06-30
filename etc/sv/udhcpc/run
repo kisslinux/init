@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec udhcpc -f 1>&2
