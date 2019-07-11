@@ -163,8 +163,8 @@ main() {
     }
 
     log "Setting hostname..."; {
-        read -r hostname < /etc/hostname &&
-            printf '%s\n' "$hostname" > /proc/sys/kernel/hostname
+        read -r hostname < /etc/hostname
+        printf '%s\n' "${hostname:-KISS}" > /proc/sys/kernel/hostname
     } 2>/dev/null
 
     # From: https://github.com/Sweets/hummingbird/blob/master/etc/rc.init
