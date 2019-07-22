@@ -1,2 +1,2 @@
 language: bash
-script:   shellcheck src/*
+script:   shellcheck lib/init/*
