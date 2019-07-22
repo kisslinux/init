@@ -53,30 +53,13 @@ main() {
         mnt /dev/shm -o mode=1777,nosuid,nodev        -nt tmpfs      shm
     }
 
-    log "Starting udev/mdev..."; {
-        if command -v udevd >/dev/null; then
+    log "Starting eudev..."; {
+        command -v udevd >/dev/null && {
             udevd --daemon
             udevadm trigger --action=add --type=subsystems
             udevadm trigger --action=add --type=devices
             udevadm settle
-
-        elif command -v mdev >/dev/null; then
-            printf '/bin/mdev\n' > /proc/sys/kernel/hotplug
-            mdev -s
-
-            for i in /sys/class/net/*/uevent; do
-                [ -f "$i" ] && printf add > "$i"
-            done
-
-            for i in /sys/bus/usb/devices/*; do
-                case "${i##*/}" in
-                    [0-9]*-[0-9]*) printf add > "$i/uevent"
-                esac
-            done
-
-            load_modules
-            load_modules
-        fi
+        }
     }
 
     log "Remounting rootfs as ro..."; {
