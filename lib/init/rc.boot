@@ -12,13 +12,6 @@ mnt() {
     }
 }
 
-load_modules() {
-    find /sys -name modalias -type f -exec cat '{}' + | sort -u |
-    while read -r module; do
-        modprobe -ba "$module" 2>/dev/null
-    done
-}
-
 emergency_shell() {
     log "" \
         "Init system encountered an error, starting emergency shell." \
