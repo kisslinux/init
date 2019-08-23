@@ -23,7 +23,7 @@ main() {
         sleep 1
     }
 
-    log "Sending KiLL signal to all processes..."; {
+    log "Sending KILL signal to all processes..."; {
         killall5 -KILL
     }
 
