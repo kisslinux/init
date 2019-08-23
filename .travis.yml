@@ -1,2 +1,0 @@
-language: bash
-script:   shellcheck lib/init/*
