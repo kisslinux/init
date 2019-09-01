@@ -36,7 +36,8 @@ main() {
     }
 
     log "Deactivating dmcrypt devices (if any exist)."; {
-        [ -x /bin/cryptsetup ] && [ -x /bin/dmsetup ] && {
+        grep -qv '^#\|^$' /etc/crypttab >/dev/null 2>&1 &&
+        cryptsetup -? >/dev/null && {
             dmsetup ls --target crypt \
                        --exec "dmsetup info -c --noheadings -o open,name" |
             while read -r drive; do

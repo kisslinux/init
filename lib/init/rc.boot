@@ -60,7 +60,8 @@ main() {
     }
 
     log "Activating encrypted devices (if any exist)..."; {
-        [ -e /etc/crypttab ] && [ -x /bin/cryptsetup ] && {
+        grep -qv '^#\|^$' /etc/crypttab >/dev/null 2>&1 &&
+        cryptsetup -? >/dev/null && {
             exec 3<&0
 
             # shellcheck disable=2086
