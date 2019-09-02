@@ -130,6 +130,9 @@ main() {
         if [ -f /var/random.seed ]; then
             cat /var/random.seed > /dev/urandom
         else
+            log "This may hang."
+            log "Mash the keyboard to generate entropy..."
+
             dd count=1 bs=512 if=/dev/random of=/var/random.seed
         fi
     }
