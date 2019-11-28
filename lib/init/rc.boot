@@ -125,7 +125,6 @@ main() {
         swapon -a || emergency_shell
     }
 
-    # From: https://github.com/Sweets/hummingbird/blob/master/etc/rc.init
     log "Seeding random..."; {
         if [ -f /var/random.seed ]; then
             cat /var/random.seed > /dev/urandom
@@ -146,7 +145,6 @@ main() {
         printf '%s\n' "${hostname:-KISS}" > /proc/sys/kernel/hostname
     } 2>/dev/null
 
-    # From: https://github.com/Sweets/hummingbird/blob/master/etc/rc.init
     log "Loading sysctl settings..."; {
         find /run/sysctl.d \
              /etc/sysctl.d \
@@ -166,14 +164,7 @@ main() {
         done
     }
 
-    log "Restricting dmesg if enabled..."; {
-        dmesg > /var/log/dmesg.log
-
-        case $(sysctl -n kernel.dmesg_restrict) in
-            1) chmod 0600 /var/log/dmesg.log ;;
-            *) chmod 0644 /var/log/dmesg.log ;;
-        esac
-    } 2>/dev/null
+    pkill udevd
 
     log "Boot stage complete..."
 }
