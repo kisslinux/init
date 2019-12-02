@@ -164,7 +164,8 @@ main() {
         done
     }
 
-    pkill udevd
+    command -v udevd >/dev/null &&
+        udevadm control --exit
 
     log "Boot stage complete..."
 }
