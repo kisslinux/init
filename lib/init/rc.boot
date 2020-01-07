@@ -174,7 +174,7 @@ main() {
     log "Running rc.d scripts..."; {
         if [ -d /etc/rc.d ] ; then
             set +f
-            for file in /etc/rc.d/*.sh ; do
+            for file in /etc/rc.d/*.boot ; do
                 [ -x "$file" ] && . "$file"
             done
             set -f

@@ -53,7 +53,7 @@ main() {
 set +f
 
 if [ -d /etc/rc.d ] ; then
-    for file in /etc/rc.d/rc.shutdown_pre* ; do
+    for file in /etc/rc.d/*.pre.shutdown ; do
         [ -x "$file" ] && . "$file"
     done
 fi
@@ -61,7 +61,7 @@ fi
 main
 
 if [ -d /etc/rc.d ] ; then
-    for file in /etc/rc.d/rc.shutdown_post* ; do
+    for file in /etc/rc.d/*.post.shutdown ; do
         [ -x "$file" ] && . "$file"
     done
 fi
