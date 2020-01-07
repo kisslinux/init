@@ -107,6 +107,10 @@ main() {
         }
     }
 
+    log "Loading rc.conf settings..."; {
+        [ -f "/etc/rc.conf" ] && . /etc/rc.conf
+    }
+
     log "Checking filesystems..."; {
         fsck -ATat noopts=_netdev
         [ $? -gt 1 ] && emergency_shell
@@ -166,6 +170,17 @@ main() {
 
     command -v udevd >/dev/null &&
         udevadm control --exit
+
+    log "Running rc.d scripts..."; {
+        if [ -d /etc/rc.d ] ; then
+            set +f
+            for file in /etc/rc.d/*.sh ; do
+                [ -x "$file" ] && . "$file"
+            done
+            unset file
+            set -f
+        fi
+    }
 
     log "Boot stage complete..."
 }

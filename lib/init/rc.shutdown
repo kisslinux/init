@@ -46,4 +46,14 @@ main() {
     }
 }
 
+set +f
+
+for file in /etc/rc.d/rc.shutdown_pre* ; do
+    [ -x "$file" ] && . "$file"
+done
+
 main
+
+for file in /etc/rc.d/rc.shutdown_post* ; do
+    [ -x "$file" ] && . "$file"
+done
