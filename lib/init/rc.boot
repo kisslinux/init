@@ -177,7 +177,6 @@ main() {
             for file in /etc/rc.d/*.sh ; do
                 [ -x "$file" ] && . "$file"
             done
-            unset file
             set -f
         fi
     }
