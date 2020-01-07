@@ -108,7 +108,7 @@ main() {
     }
 
     log "Loading rc.conf settings..."; {
-        [ -f "/etc/rc.conf" ] && . /etc/rc.conf
+        [ -f /etc/rc.conf ] && . /etc/rc.conf
     }
 
     log "Checking filesystems..."; {
