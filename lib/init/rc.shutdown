@@ -32,7 +32,7 @@ main() {
     log "Waiting for services to stop..."; {
         sv -w196 force-stop /var/service/*
         sv exit /var/service/*
-    }
+    } >/dev/null 2>&1
 
     log "Saving random seed..."; {
         dd count=1 bs=512 if=/dev/random of=/var/random.seed
