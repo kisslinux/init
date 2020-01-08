@@ -23,7 +23,6 @@ emergency_shell() {
 main() {
     PATH=/usr/bin:/usr/sbin
     old_ifs=$IFS
-    set -f
 
     log "Welcome to KISS $(uname -sr)!"
 
@@ -80,7 +79,8 @@ main() {
 
                 # Parse options by turning list into a pseudo array.
                 IFS=,
-                set -- $opts
+                set -f
+                set +f -- $opts
                 IFS=$old_ifs
 
                 copts="cryptsetup luksOpen"
