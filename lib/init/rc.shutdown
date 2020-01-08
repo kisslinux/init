@@ -4,6 +4,31 @@ log() {
     printf '\033[31;1m=>\033[m %s\n' "$@"
 }
 
+killall5_sh() {
+    # This is a killall5 replacement written in POSIX shell.
+    # This is more or less identical in function to the
+    # versions found in busybox and sbase/ubase.
+    cd /proc || {
+        log "ERROR: /proc doesn't exist..."
+    	return 1
+    }
+
+    kill -s SIGSTOP -1
+
+    for pid in [1-9]*/; do
+        case ${pid%/} in
+            "$$"|"$PPID"|*[!0-9]*|1) continue ;;
+        esac
+
+        kill -s "${1:-TERM}" "${pid%/}"
+    done
+
+    kill -s SIGCONT -1
+
+    cd /
+}
+
+
 main() {
     PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
@@ -19,12 +44,12 @@ main() {
     halt -w
 
     log "Sending TERM signal to all processes..."; {
-        killall5 -TERM
+        killall5_sh TERM
         sleep 1
     }
 
     log "Sending KILL signal to all processes..."; {
-        killall5 -KILL
+        killall5_sh KILL
     }
 
     log "Unmounting filesystems and disabling swap..."; {
