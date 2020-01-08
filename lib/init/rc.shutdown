@@ -52,16 +52,12 @@ main() {
 
 set +f
 
-if [ -d /etc/rc.d ] ; then
-    for file in /etc/rc.d/*.pre.shutdown ; do
-        [ -x "$file" ] && . "$file"
-    done
-fi
+for file in /etc/rc.d/*.pre.shutdown ; do
+    [ -f "$file" ] && . "$file"
+done
 
 main
 
-if [ -d /etc/rc.d ] ; then
-    for file in /etc/rc.d/*.post.shutdown ; do
-        [ -x "$file" ] && . "$file"
-    done
-fi
+for file in /etc/rc.d/*.post.shutdown ; do
+    [ -f "$file" ] && . "$file"
+done

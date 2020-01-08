@@ -172,13 +172,11 @@ main() {
         udevadm control --exit
 
     log "Running rc.d scripts..."; {
-        if [ -d /etc/rc.d ] ; then
-            set +f
-            for file in /etc/rc.d/*.boot ; do
-                [ -x "$file" ] && . "$file"
-            done
-            set -f
-        fi
+        set +f
+        for file in /etc/rc.d/*.boot ; do
+            [ -f "$file" ] && . "$file"
+        done
+        set -f
     }
 
     log "Boot stage complete..."
