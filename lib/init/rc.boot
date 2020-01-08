@@ -168,16 +168,14 @@ main() {
         done
     }
 
-    command -v udevd >/dev/null &&
-        udevadm control --exit
-
     log "Running rc.d scripts..."; {
-        set +f
-        for file in /etc/rc.d/*.boot ; do
+        for file in /etc/rc.d/*.boot; do
             [ -f "$file" ] && . "$file"
         done
-        set -f
     }
+
+    command -v udevd >/dev/null &&
+        udevadm control --exit
 
     log "Boot stage complete..."
 }

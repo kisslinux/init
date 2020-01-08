@@ -50,8 +50,6 @@ main() {
     }
 }
 
-set +f
-
 for file in /etc/rc.d/*.pre.shutdown ; do
     [ -f "$file" ] && . "$file"
 done
