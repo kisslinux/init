@@ -1,3 +1,3 @@
-# kiss-init
+# init
 
 Init scripts for KISS.
