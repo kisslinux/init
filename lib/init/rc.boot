@@ -116,7 +116,7 @@ main() {
         mount -o remount,rw / || emergency_shell
     }
 
-    log "Mounting all local filesystems..."; {
+    log "Mounting all filesystems..."; {
         mount -a ||
             emergency_shell
     }
