@@ -8,8 +8,10 @@ main() {
     PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
     log "Waiting for services to stop..."; {
-        sv -w196 force-stop /var/service/*
-        sv exit /var/service/*
+        if command -v sv && [ "$(pgrep runsvdir)" ]; then
+            sv -w196 force-stop /var/service/*
+            sv exit /var/service/*
+        fi
     }
 
     log "Saving random seed..."; {
