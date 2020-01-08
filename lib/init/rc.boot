@@ -51,6 +51,7 @@ main() {
             udevd --daemon
             udevadm trigger --action=add --type=subsystems
             udevadm trigger --action=add --type=devices
+            udevadm trigger --action=change --type=devices
             udevadm settle
         }
     }
