@@ -10,7 +10,7 @@ killall5_sh() {
     # versions found in busybox and sbase/ubase.
     cd /proc || {
         log "ERROR: /proc doesn't exist..."
-    	return 1
+        return 1
     }
 
     kill -s SIGSTOP -1
@@ -24,10 +24,7 @@ killall5_sh() {
     done
 
     kill -s SIGCONT -1
-
-    cd /
 }
-
 
 main() {
     PATH=/sbin:/bin:/usr/sbin:/usr/bin
