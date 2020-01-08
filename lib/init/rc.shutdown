@@ -38,8 +38,6 @@ main() {
         dd count=1 bs=512 if=/dev/random of=/var/random.seed
     }
 
-    halt -w
-
     log "Sending TERM signal to all processes..."; {
         killall5_sh TERM
         sleep 1
@@ -51,9 +49,8 @@ main() {
 
     log "Unmounting filesystems and disabling swap..."; {
         swapoff -a
-        umount -rat nosysfs,noproc,nodevtmpfs,notmpfs
+        umount -a
         mount -o remount,ro /
-
         sync
     }
 

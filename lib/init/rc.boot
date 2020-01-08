@@ -118,8 +118,7 @@ main() {
     }
 
     log "Mounting all local filesystems..."; {
-        mount -at nosysfs,nonfs,nonfs4,nosmbfs,nocifs -O no_netdev ||
-            emergency_shell
+        mount -a || emergency_shell
     }
 
     log "Enabling swap..."; {
