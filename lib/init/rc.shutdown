@@ -17,12 +17,12 @@ main() {
     }
 
     log "Sending TERM signal to all processes..."; {
-        killall5 TERM
+        killall5 -s TERM
         sleep 1
     }
 
     log "Sending KILL signal to all processes..."; {
-        killall5 KILL
+        killall5 -s KILL
     }
 
     log "Unmounting filesystems and disabling swap..."; {
