@@ -117,7 +117,7 @@ main() {
     }
 
     log "Mounting all local filesystems..."; {
-        mount -at nosysfs,nonfs,nonfs4,nosmbfs,nocifs -O no_netdev ||
+        mount -a ||
             emergency_shell
     }
 
