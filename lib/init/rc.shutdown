@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=1090,1091
 
 log() {
     printf '\033[31;1m=>\033[m %s\n' "$@"
