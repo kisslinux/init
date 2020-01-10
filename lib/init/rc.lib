@@ -49,7 +49,10 @@ parse_conf() {
     [ -f "$1" ] && while read -r line; do
         case $line in \#*|*[!=]*) continue; esac
 
-        export "${line?}"
+        # Disable this warning as it is the intended
+        # behavior to dynamically set variables.
+        # shellcheck disable=2163
+        export "$line"
     done < "$1"
 }
 
