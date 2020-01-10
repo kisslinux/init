@@ -1,25 +1,7 @@
 #!/bin/sh
 # shellcheck disable=1090,1091
 
-log() {
-    printf '\033[31;1m=>\033[m %s\n' "$@"
-}
-
-mnt() {
-    mountpoint -q "$1" || {
-        dir=$1
-        shift
-        mount "$@" "$dir"
-    }
-}
-
-emergency_shell() {
-    log "" \
-        "Init system encountered an error, starting emergency shell." \
-        "When ready, type 'exit' to continue the boot."
-
-    /bin/sh -l
-}
+. /usr/lib/init/rc.lib
 
 main() {
     PATH=/usr/bin:/usr/sbin
@@ -120,6 +102,10 @@ main() {
         }
     }
 
+    log "Loading rc.conf settings..."; {
+        parse_conf /etc/rc.conf
+    }
+
     log "Checking filesystems..."; {
         fsck -ATat noopts=_netdev
         [ $? -gt 1 ] && emergency_shell
@@ -163,6 +149,10 @@ main() {
                    sysctl -p "$conf" ;;
             esac
         done
+    }
+
+    log "Running rc.d hooks..."; {
+        run_hooks /etc/rc.d/*.boot
     }
 
     command -v udevd >/dev/null &&

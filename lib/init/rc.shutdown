@@ -1,34 +1,18 @@
 #!/bin/sh
 # shellcheck disable=1090,1091
 
-log() {
-    printf '\033[31;1m=>\033[m %s\n' "$@"
-}
-
-killall5_sh() {
-    # This is a killall5 replacement written in POSIX shell.
-    # This is more or less identical in function to the
-    # versions found in busybox and sbase/ubase.
-    cd /proc || {
-        log "ERROR: /proc doesn't exist..."
-        return 1
-    }
-
-    kill -s SIGSTOP -1
-
-    for pid in [1-9]*/; do
-        case ${pid%/} in
-            "$$"|"$PPID"|*[!0-9]*|1) continue ;;
-        esac
-
-        kill -s "${1:-TERM}" "${pid%/}"
-    done
-
-    kill -s SIGCONT -1
-}
+. /usr/lib/init/rc.lib
 
 main() {
     PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+    log "Loading rc.conf settings..."; {
+        parse_conf /etc/rc.conf
+    }
+
+    log "Running shutdown pre hooks..."; {
+        run_hooks /etc/rc.d/*.pre.shutdown
+    }
 
     log "Waiting for services to stop..."; {
         sv -w196 force-stop /var/service/*
@@ -63,6 +47,10 @@ main() {
                 [ "${drive%%:*}" = "0" ] && cryptsetup close "${drive##*:}"
             done
         }
+    }
+
+    log "Running shutdown post hooks..."; {
+        run_hooks /etc/rc.d/*.post.shutdown
     }
 }
 

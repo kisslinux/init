@@ -1,0 +1,57 @@
+# vim: set ft=bash:
+
+log() {
+    printf '\033[31;1m=>\033[m %s\n' "$@"
+}
+
+mnt() {
+    mountpoint -q "$1" || {
+        dir=$1
+        shift
+        mount "$@" "$dir"
+    }
+}
+
+emergency_shell() {
+    log "" \
+        "Init system encountered an error, starting emergency shell." \
+        "When ready, type 'exit' to continue the boot."
+
+    /bin/sh -l
+}
+
+killall5_sh() {
+    # This is a killall5 replacement written in POSIX shell.
+    # This is more or less identical in function to the
+    # versions found in busybox and sbase/ubase.
+    cd /proc || {
+        log "ERROR: /proc doesn't exist..."
+        return 1
+    }
+
+    kill -s SIGSTOP -1
+
+    for pid in [1-9]*/; do
+        case ${pid%/} in
+            "$$"|"$PPID"|*[!0-9]*|1) continue ;;
+        esac
+
+        kill -s "${1:-TERM}" "${pid%/}"
+    done
+
+    kill -s SIGCONT -1
+}
+
+parse_conf() {
+    [ -f "$1" ] && while read -r line; do
+        case $line in \#*|*[!=]*) continue; esac
+
+        export "${line?}"
+    done < "$1"
+}
+
+run_hooks() {
+    [ -f "$1" ] && for file in "$@"; do
+        [ -f "$file" ] && . "$file"
+    done
+}
