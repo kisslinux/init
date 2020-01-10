@@ -46,6 +46,17 @@ main() {
         mnt /dev/shm -o mode=1777,nosuid,nodev        -nt tmpfs      shm
     }
 
+    log "Seeding random..."; {
+        if [ -f /var/random.seed ]; then
+            cat /var/random.seed > /dev/urandom
+        else
+            log "This may hang."
+            log "Mash the keyboard to generate entropy..."
+
+            dd count=1 bs=512 if=/dev/random of=/var/random.seed
+        fi
+    }
+
     log "Starting eudev..."; {
         command -v udevd >/dev/null && {
             udevd --daemon
@@ -124,17 +135,6 @@ main() {
 
     log "Enabling swap..."; {
         swapon -a || emergency_shell
-    }
-
-    log "Seeding random..."; {
-        if [ -f /var/random.seed ]; then
-            cat /var/random.seed > /dev/urandom
-        else
-            log "This may hang."
-            log "Mash the keyboard to generate entropy..."
-
-            dd count=1 bs=512 if=/dev/random of=/var/random.seed
-        fi
     }
 
     log "Setting up loopback..."; {
