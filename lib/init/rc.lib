@@ -54,6 +54,9 @@ parse_conf() {
 }
 
 run_hooks() {
+    # Disable this warning as it is due to shellcheck
+    # not being able to read the sourced file. Harmless.
+    # shellcheck disable=1090
     [ -f "$1" ] && for file in "$@"; do
         [ -f "$file" ] && . "$file"
     done
