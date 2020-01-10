@@ -3,55 +3,52 @@
 
 . /usr/lib/init/rc.lib
 
-main() {
-    PATH=/sbin:/bin:/usr/sbin:/usr/bin
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
-    log "Loading rc.conf settings..."; {
-        parse_conf /etc/rc.conf
-    }
+log "Loading rc.conf settings..."; {
+    parse_conf /etc/rc.conf
+}
 
-    log "Running shutdown pre hooks..."; {
-        run_hooks /etc/rc.d/*.pre.shutdown
-    }
+log "Running shutdown pre hooks..."; {
+    run_hooks /etc/rc.d/*.pre.shutdown
+}
 
-    log "Waiting for services to stop..."; {
-        sv -w196 force-stop /var/service/*
-        sv exit /var/service/*
-    } >/dev/null 2>&1
+log "Waiting for services to stop..."; {
+    sv -w196 force-stop /var/service/*
+    sv exit /var/service/*
+} >/dev/null 2>&1
 
-    log "Saving random seed..."; {
-        dd count=1 bs=512 if=/dev/random of=/var/random.seed
-    }
+log "Saving random seed..."; {
+    dd count=1 bs=512 if=/dev/random of=/var/random.seed
+}
 
-    log "Sending TERM signal to all processes..."; {
-        killall5_sh TERM
-        sleep 1
-    }
+log "Sending TERM signal to all processes..."; {
+    killall5_sh TERM
+    sleep 1
+}
 
-    log "Sending KILL signal to all processes..."; {
-        killall5_sh KILL
-    }
+log "Sending KILL signal to all processes..."; {
+    killall5_sh KILL
+}
 
-    log "Unmounting filesystems and disabling swap..."; {
-        swapoff -a
-        umount -a
-        mount -o remount,ro /
-        sync
-    }
+log "Unmounting filesystems and disabling swap..."; {
+    swapoff -a
+    umount -a
+    mount -o remount,ro /
+    sync
+}
 
-    log "Deactivating dmcrypt devices (if any exist)."; {
-        [ -x /bin/cryptsetup ] && [ -x /bin/dmsetup ] && {
-            dmsetup ls --target crypt \
-                       --exec "dmsetup info -c --noheadings -o open,name" |
-            while read -r drive; do
-                [ "${drive%%:*}" = "0" ] && cryptsetup close "${drive##*:}"
-            done
-        }
-    }
+log "Deactivating dmcrypt devices (if any exist)."; {
+    [ -x /bin/cryptsetup ] && [ -x /bin/dmsetup ] && {
+        dmsetup ls --target crypt \
+                   --exec "dmsetup info -c --noheadings -o open,name" |
 
-    log "Running shutdown post hooks..."; {
-        run_hooks /etc/rc.d/*.post.shutdown
+        while read -r drive; do
+            [ "${drive%%:*}" = "0" ] && cryptsetup close "${drive##*:}"
+        done
     }
 }
 
-main
+log "Running shutdown post hooks..."; {
+    run_hooks /etc/rc.d/*.post.shutdown
+}
