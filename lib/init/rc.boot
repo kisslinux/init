@@ -95,7 +95,7 @@ main() {
 
             exec 3>&-
 
-            [ "$copts" ] && [ -x /bin/vgchance ] && {
+            [ "$copts" ] && [ -x /bin/vgchange ] && {
                 log "Activating LVM devices for dm-crypt..."
                 vgchange --sysinit -a y || emergency_shell
             }
