@@ -108,7 +108,9 @@ main() {
     }
 
     log "Loading rc.conf settings..."; {
-        [ -f /etc/rc.conf ] && . /etc/rc.conf
+        while read -r line; do
+            [ "${line##\#*}" ] && export "$line"
+        done < /etc/rc.conf
     }
 
     log "Checking filesystems..."; {
@@ -168,7 +170,7 @@ main() {
         done
     }
 
-    log "Running rc.d scripts..."; {
+    log "Running rc.d hooks..."; {
         for file in /etc/rc.d/*.boot; do
             [ -f "$file" ] && . "$file"
         done
