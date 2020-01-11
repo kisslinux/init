@@ -23,8 +23,8 @@ log "Mounting pseudo filesystems..."; {
                    /dev/pts   \
                    /dev/shm
 
-    mnt /dev/pts -o mode=0620,gid=5,nosuid,noexec -nt devpts     devpts
-    mnt /dev/shm -o mode=1777,nosuid,nodev        -nt tmpfs      shm
+    mnt /dev/pts -o mode=0620,gid=5,nosuid,noexec -nt devpts devpts
+    mnt /dev/shm -o mode=1777,nosuid,nodev        -nt tmpfs  shm
 }
 
 log "Seeding random..."; {
@@ -38,7 +38,7 @@ log "Seeding random..."; {
     fi
 }
 
-log "Starting eudev..."; {
+log "Starting eudev if installed..."; {
     command -v udevd >/dev/null && {
         udevd --daemon
         udevadm trigger --action=add --type=subsystems
