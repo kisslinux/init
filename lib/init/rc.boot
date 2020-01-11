@@ -102,7 +102,7 @@ log "Activating encrypted devices (if any exist)..."; {
 }
 
 log "Loading rc.conf settings..."; {
-    parse_conf /etc/rc.conf
+    . /etc/rc.conf
 }
 
 log "Checking filesystems..."; {

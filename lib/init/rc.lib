@@ -1,5 +1,6 @@
 #!/bin/sh
 # vim: set ft=bash:
+# shellcheck disable=1090,1091
 # This file is *not* executable as it is sourced by
 # the rc.boot and rc.shutdown scripts.
 
@@ -45,21 +46,7 @@ killall5_sh() {
     kill -s SIGCONT -1
 }
 
-parse_conf() {
-    [ -f "$1" ] && while read -r line; do
-        case $line in \#*|*[!=]*) continue; esac
-
-        # Disable this warning as it is the intended
-        # behavior to dynamically set variables.
-        # shellcheck disable=2163
-        export "$line"
-    done < "$1"
-}
-
 run_hooks() {
-    # Disable this warning as it is due to shellcheck
-    # not being able to read the sourced file. Harmless.
-    # shellcheck disable=1090
     [ -f "$1" ] && for file in "$@"; do
         [ -f "$file" ] && . "$file"
     done
