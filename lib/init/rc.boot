@@ -151,7 +151,9 @@ log "Loading sysctl settings..."; {
 }
 
 log "Running rc.d hooks..."; {
-    run_hooks /etc/rc.d/*.boot
+    for file in /etc/rc.d/*.boot; do
+        [ -f "$file" ] && . "$file"
+    done
 }
 
 command -v udevd >/dev/null &&

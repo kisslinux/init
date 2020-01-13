@@ -45,9 +45,3 @@ killall5_sh() {
 
     kill -s SIGCONT -1
 }
-
-run_hooks() {
-    [ -f "$1" ] && for file in "$@"; do
-        [ -f "$file" ] && . "$file"
-    done
-}
