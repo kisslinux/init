@@ -150,13 +150,13 @@ log "Loading sysctl settings..."; {
     done
 }
 
+command -v udevd >/dev/null &&
+    udevadm control --exit
+
 log "Running rc.d hooks..."; {
     for file in /etc/rc.d/*.boot; do
         [ -f "$file" ] && . "$file"
     done
 }
-
-command -v udevd >/dev/null &&
-    udevadm control --exit
 
 log "Boot stage complete..."
