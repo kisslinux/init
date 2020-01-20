@@ -25,6 +25,13 @@ log "Mounting pseudo filesystems..."; {
 
     mnt /dev/pts -o mode=0620,gid=5,nosuid,noexec -nt devpts devpts
     mnt /dev/shm -o mode=1777,nosuid,nodev        -nt tmpfs  shm
+
+    # udev created these for us, however other device managers
+    # don't. This is fine even when udev is in use.
+    ln -snf /proc/self/fd /dev/fd
+    ln -snf fd/0 /dev/stdin
+    ln -snf fd/1 /dev/stdout
+    ln -snf fd/2 /dev/stderr
 }
 
 log "Seeding random..."; {
