@@ -38,8 +38,10 @@ log "Seeding random..."; {
     fi
 }
 
-log "Starting eudev if installed..."; {
+log "Starting device manager..."; {
     if command -v udevd >/dev/null; then
+        log "Starting udevd..."
+
         udevd --daemon
         udevadm trigger --action=add --type=subsystems
         udevadm trigger --action=add --type=devices
@@ -47,6 +49,8 @@ log "Starting eudev if installed..."; {
         udevadm settle
 
     elif command -v mdev >/dev/null; then
+        log "Starting mdev..."
+
         printf '/bin/mdev\n' > /proc/sys/kernel/hotplug
         mdev -s
 
