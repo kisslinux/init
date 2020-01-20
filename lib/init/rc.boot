@@ -39,13 +39,38 @@ log "Seeding random..."; {
 }
 
 log "Starting eudev if installed..."; {
-    command -v udevd >/dev/null && {
+    if command -v udevd >/dev/null; then
         udevd --daemon
         udevadm trigger --action=add --type=subsystems
         udevadm trigger --action=add --type=devices
         udevadm trigger --action=change --type=devices
         udevadm settle
-    }
+
+    elif command -v mdev >/dev/null; then
+        printf '/bin/mdev\n' > /proc/sys/kernel/hotplug
+        mdev -s
+
+        # Handle Network interfaces.
+        for file in /sys/class/net/*/uevent; do
+            printf 'add\n' > "$file"
+        done 2>/dev/null
+
+        # Handle USB devices.
+        for file in /sys/bus/usb/devices/*; do
+            case ${file##*/} in
+                [0-9]*-[0-9]*)
+                    printf 'add\n' > "$file/uevent"
+                ;;
+            esac
+        done
+
+        # TODO: Load required modules.
+        # find /sys -name modalias -type f -exec cat {} + | sort -u |
+
+        # while read -r line; do
+        #     modprobe -b -a "$line" 2>/dev/null
+        # done
+    fi
 }
 
 log "Remounting rootfs as ro..."; {
