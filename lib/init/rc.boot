@@ -74,13 +74,6 @@ log "Starting device manager..."; {
                 ;;
             esac
         done
-
-        # TODO: Load required modules.
-        # find /sys -name modalias -type f -exec cat {} + | sort -u |
-
-        # while read -r line; do
-        #     modprobe -b -a "$line" 2>/dev/null
-        # done
     fi
 }
 
