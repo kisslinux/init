@@ -28,10 +28,10 @@ log "Mounting pseudo filesystems..."; {
 
     # udev created these for us, however other device managers
     # don't. This is fine even when udev is in use.
-    ln -snf /proc/self/fd /dev/fd
-    ln -snf fd/0 /dev/stdin
-    ln -snf fd/1 /dev/stdout
-    ln -snf fd/2 /dev/stderr
+    ln -sf /proc/self/fd /dev/fd
+    ln -sf fd/0 /dev/stdin
+    ln -sf fd/1 /dev/stdout
+    ln -sf fd/2 /dev/stderr
 }
 
 log "Seeding random..."; {
@@ -161,14 +161,13 @@ log "Setting hostname..."; {
 } 2>/dev/null
 
 log "Loading sysctl settings..."; {
-    find /run/sysctl.d \
-         /etc/sysctl.d \
-         /usr/local/lib/sysctl.d \
-         /usr/lib/sysctl.d \
-         /lib/sysctl.d \
-         /etc/sysctl.conf \
-         -name \*.conf -type f 2>/dev/null \
-    | while read -r conf; do
+    for conf in /run/sysctl.d/*.conf \
+                /etc/sysctl.d/*.conf \
+                /usr/lib/sysctl.d/*.conf \
+                /etc/sysctl.conf; do
+
+        [ -f "$conf" ] || break
+
         seen="$seen ${conf##*/}"
 
         case $seen in
