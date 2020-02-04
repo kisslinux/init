@@ -6,7 +6,7 @@
 int main (int argc, char *argv[]) {
     sync();
 
-    switch ((int)argv[argc < 2 ? 0 : 1][0]) {
+    switch ((int)argv[argc < 2 ? 0 : 1][0] + geteuid()) {
         // Poweroff (p).
         case 112:
             reboot(RB_POWER_OFF);
@@ -18,7 +18,7 @@ int main (int argc, char *argv[]) {
             break;
 
         default:
-            printf("usage: kpow r[eboot] | kpow p[oweroff]\n");
+            printf("usage (as root): kpow r[eboot]|p[oweroff]\n");
             break;
     }
 
