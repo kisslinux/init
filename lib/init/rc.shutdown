@@ -56,3 +56,13 @@ log "Running shutdown post hooks..."; {
         [ -f "$file" ] && . "$file"
     done
 }
+
+
+# Run 'kpow' to signal to the kernel that we want to reboot or
+# poweroff the system. These will only run when '$1' contains
+# a valid action. When busybox init is used, this code is
+# ignored entirely as it handles this itself.
+case $1 in
+    reboot)   kpow r ;;
+    poweroff) kpow p ;;
+esac
