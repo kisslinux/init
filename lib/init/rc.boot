@@ -61,6 +61,9 @@ log "Starting device manager..."; {
         printf '/bin/mdev\n' > /proc/sys/kernel/hotplug
         mdev -s
 
+        # Create /dev/mapper nodes
+        [ -x /bin/dmsetup ] && dmsetup mknodes
+
         # Handle Network interfaces.
         for file in /sys/class/net/*/uevent; do
             printf 'add\n' > "$file"
