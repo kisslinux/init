@@ -19,7 +19,7 @@ int main (int argc, char *argv[]) {
 
         default:
             printf("usage (as root): kpow r[eboot]|p[oweroff]\n");
-            break;
+            return 1;
     }
 
     return 0;
