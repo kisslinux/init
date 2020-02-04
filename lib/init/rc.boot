@@ -34,17 +34,6 @@ log "Mounting pseudo filesystems..."; {
     ln -sf fd/2 /dev/stderr
 }
 
-log "Seeding random..."; {
-    if [ -f /var/random.seed ]; then
-        cat /var/random.seed > /dev/urandom
-    else
-        log "This may hang."
-        log "Mash the keyboard to generate entropy..."
-
-        dd count=1 bs=512 if=/dev/random of=/var/random.seed
-    fi
-}
-
 log "Starting device manager..."; {
     if command -v udevd >/dev/null; then
         log "Starting udevd..."
@@ -152,6 +141,17 @@ log "Mounting all local filesystems..."; {
 
 log "Enabling swap..."; {
     swapon -a || emergency_shell
+}
+
+log "Seeding random..."; {
+    if [ -f /var/random.seed ]; then
+        cat /var/random.seed > /dev/urandom
+    else
+        log "This may hang."
+        log "Mash the keyboard to generate entropy..."
+
+        dd count=1 bs=512 if=/dev/random of=/var/random.seed
+    fi
 }
 
 log "Setting up loopback..."; {
