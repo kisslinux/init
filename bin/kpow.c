@@ -7,13 +7,11 @@ int main (int argc, char *argv[]) {
     sync();
 
     switch ((int)argv[argc < 2 ? 0 : 1][0] + geteuid()) {
-        // Poweroff (p).
-        case 112:
+        case 'p':
             reboot(RB_POWER_OFF);
             break;
 
-        // Reboot (r).
-        case 114:
+        case 'r':
             reboot(RB_AUTOBOOT);
             break;
 
