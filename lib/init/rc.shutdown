@@ -57,7 +57,6 @@ log "Running shutdown post hooks..."; {
     done
 }
 
-
 # Run 'kpow' to signal to the kernel that we want to reboot or
 # poweroff the system. These will only run when '$1' contains
 # a valid action. When busybox init is used, this code is
