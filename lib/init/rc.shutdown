@@ -1,11 +1,10 @@
 #!/bin/sh
 # shellcheck disable=1090,1091
 
-# Ignore these signals.
-trap : INT QUIT TERM
-
-# Avoid staircase effect. Neato.
-stty onlcr
+[ "$(id -u)" = 0 ] || {
+    printf 'must be root\n'
+    exit 1
+}
 
 . /usr/lib/init/rc.lib
 

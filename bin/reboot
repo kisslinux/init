@@ -1,1 +1,1 @@
-poweroff
+#!/lib/init/rc.shutdown reboot

@@ -1,6 +1,11 @@
 #!/bin/sh
 # shellcheck disable=1090,1091
 
+[ "$(id -u)" = 0 ] || {
+    printf 'must be root\n'
+    exit 1
+}
+
 . /usr/lib/init/rc.lib
 
 PATH=/usr/bin:/usr/sbin
