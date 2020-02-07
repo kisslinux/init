@@ -3,7 +3,8 @@
 
 . /usr/lib/init/rc.lib
 
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
+# Avoid staircase effect. Neato.
+stty onlcr
 
 log "Loading rc.conf settings..."; {
     [ -f /etc/rc.conf ] && . /etc/rc.conf
