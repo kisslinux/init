@@ -1,10 +1,13 @@
 #!/bin/sh
 # shellcheck disable=1090,1091
 
-. /usr/lib/init/rc.lib
+# Ignore these signals.
+trap : INT QUIT TERM
 
 # Avoid staircase effect. Neato.
 stty onlcr
+
+. /usr/lib/init/rc.lib
 
 log "Loading rc.conf settings..."; {
     [ -f /etc/rc.conf ] && . /etc/rc.conf
