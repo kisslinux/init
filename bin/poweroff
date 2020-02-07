@@ -1,8 +1,0 @@
-#!/bin/sh
-
-[ "$(id -u)" = 0 ] || {
-    printf 'must be root\n'
-    exit 1
-}
-
-/usr/lib/init/rc.shutdown "${0##*/}"
