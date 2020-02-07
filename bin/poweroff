@@ -5,4 +5,4 @@
     exit 1
 }
 
-/lib/init/rc.shutdown "${0##*/}"
+exec /lib/init/rc.shutdown "${0##*/}"

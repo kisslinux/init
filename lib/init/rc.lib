@@ -23,25 +23,3 @@ emergency_shell() {
 
     /bin/sh -l
 }
-
-killall5_sh() {
-    # This is a killall5 replacement written in POSIX shell.
-    # This is more or less identical in function to the
-    # versions found in busybox and sbase/ubase.
-    cd /proc || {
-        log "ERROR: /proc doesn't exist..."
-        return 1
-    }
-
-    kill -s SIGSTOP -1
-
-    for pid in [1-9]*/; do
-        case ${pid%/} in
-            "$$"|"$PPID"|*[!0-9]*|1) continue ;;
-        esac
-
-        kill -s "${1:-TERM}" "${pid%/}"
-    done
-
-    kill -s SIGCONT -1
-}
