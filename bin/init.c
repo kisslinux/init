@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-int main() {
+int main(void) {
     sigset_t set;
     int status;
 
