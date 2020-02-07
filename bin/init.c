@@ -1,18 +1,21 @@
+// Tiny init by Rich Felker.
+// See: https://ewontfix.com/14/
+
 #define _XOPEN_SOURCE 700
+
 #include <signal.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
 int main(void) {
     sigset_t set;
-    int status;
 
     if (getpid() != 1) return 1;
 
     sigfillset(&set);
     sigprocmask(SIG_BLOCK, &set, 0);
 
-    if (fork()) for (;;) wait(&status);
+    if (fork()) for (;;) wait(&(int){0});
 
     sigprocmask(SIG_UNBLOCK, &set, 0);
 
