@@ -9,17 +9,56 @@ log() {
 }
 
 mnt() {
-    mountpoint -q "$1" || {
-        dir=$1
-        shift
-        mount "$@" "$dir"
-    }
+    mountpoint -q "$1" && return
+    dir=$1
+    shift
+    mount "$@" "$dir"
 }
 
-emergency_shell() {
-    log "" \
-        "Init system encountered an error, starting emergency shell." \
+sos() {
+    log "Init system encountered an error, starting emergency shell." \
         "When ready, type 'exit' to continue the boot."
 
     /bin/sh -l
+}
+
+parse_crypttab() {
+    # This is a pure shell crypttab parser which supports
+    # a subset of the format.
+    exec 3<&0
+
+    # shellcheck disable=2086
+    while read -r name dev pass opts err; do
+        # Skip comments.
+        [ "${name##\#*}" ] || continue
+
+        # Break on invalid crypttab (> 5 columns).
+        [ "$err" ] && break
+
+        # Turn 'UUID=*' lines into device names.
+        [ "${dev##UUID*}" ] || dev=$(blkid -l -o device -t "$dev")
+
+        # Parse options by turning the list into a pseudo array.
+        { old_ifs=$IFS; IFS=,; set -f; set +f -- $opts; IFS=$old_ifs; }
+
+        # Create an argument list (no other way to do this in sh).
+        for opt; do case $opt in
+            discard)            copts="$copts --allow-discards" ;;
+            readonly|read-only) copts="$copts -r" ;;
+            tries=*)            copts="$copts -T ${opt##*=}" ;;
+        esac; done
+
+        # If password is 'none', '-' or empty ask for it.
+        case $pass in
+            none|-|"") cryptsetup luksOpen $copts "$dev" "$name" <&3 ;;
+            *)         cryptsetup luksOpen $copts -d "$pass" "$dev" "$name" ;;
+        esac
+    done < /etc/crypttab
+
+    exec 3>&-
+
+    [ "$copts" ] && [ -x /bin/vgchange ] && {
+        log "Activating LVM devices for dm-crypt..."
+        vgchange --sysinit -a y || emergency_shell
+    }
 }
