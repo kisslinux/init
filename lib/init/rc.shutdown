@@ -24,12 +24,12 @@ log "Saving random seed..."; {
 }
 
 log "Sending TERM signal to all processes..."; {
-    killall5 -s TERM
+    kall 15
     sleep 2
 }
 
 log "Sending KILL signal to all processes..."; {
-    killall5 -s KILL
+    kall 9
 }
 
 log "Unmounting filesystems and disabling swap..."; {
