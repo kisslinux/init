@@ -67,10 +67,6 @@ log "Starting device manager..."; {
             esac
         done
     fi
-
-    # udev sometimes doesn't set this permission for whatever
-    # reason. Until we figure out why, let's do it ourselves.
-    chown root:video /dev/dri/*
 }
 
 log "Remounting rootfs as ro..."; {
@@ -193,5 +189,9 @@ log "Running rc.d hooks..."; {
         [ -f "$file" ] && . "$file"
     done
 }
+
+# udev sometimes doesn't set this permission for whatever
+# reason. Until we figure out why, let's do it ourselves.
+chown root:video /dev/dri/*
 
 log "Boot stage complete..."
