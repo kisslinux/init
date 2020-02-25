@@ -32,10 +32,6 @@ log "Mounting pseudo filesystems..."; {
     ln -sf fd/0 /dev/stdin
     ln -sf fd/1 /dev/stdout
     ln -sf fd/2 /dev/stderr
-
-    # udev sometimes doesn't set this permission for whatever
-    # reason. Until we figure out why, let's do it ourselves.
-    chown root:video /dev/dri/*
 }
 
 log "Starting device manager..."; {
@@ -71,6 +67,10 @@ log "Starting device manager..."; {
             esac
         done
     fi
+
+    # udev sometimes doesn't set this permission for whatever
+    # reason. Until we figure out why, let's do it ourselves.
+    chown root:video /dev/dri/*
 }
 
 log "Remounting rootfs as ro..."; {
