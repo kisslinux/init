@@ -33,7 +33,10 @@ parse_crypttab() {
         [ "${name##\#*}" ] || continue
 
         # Break on invalid crypttab (> 5 columns).
-        [ "$err" ] && break
+        [ "$err" ] && {
+            printf 'error: A valid crypttab has only 4 columns.\n'
+            break
+        }
 
         # Turn 'UUID=*' lines into device names.
         [ "${dev##UUID*}" ] || dev=$(blkid -l -o device -t "$dev")
