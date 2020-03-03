@@ -62,6 +62,6 @@ parse_crypttab() {
 
     [ "$copts" ] && [ -x /bin/vgchange ] && {
         log "Activating LVM devices for dm-crypt..."
-        vgchange --sysinit -a y || emergency_shell
+        vgchange --sysinit -a y || sos
     }
 }
