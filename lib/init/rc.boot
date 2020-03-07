@@ -46,30 +46,19 @@ log "Starting device manager..."; {
     elif command -v mdev >/dev/null; then
         log "Starting mdev..."
 
+        mdev -s
+        mdev -df & mdev_pid=$!
+
         # Try to set the hotplug script to mdev.
         # This will silently fail if unavailable.
         #
         # The user should then run the mdev service
         # to enable hotplugging.
-        printf /bin/mdev 2>/dev/null > \
-            /proc/sys/kernel/hotplug
-
-        mdev -s
+        printf /bin/mdev 2>/dev/null \
+            > /proc/sys/kernel/hotplug
 
         # Create /dev/mapper nodes.
         [ -x /bin/dmsetup ] && dmsetup mknodes
-
-        # Handle Network interfaces.
-        for file in /sys/class/net/*/uevent; do
-            printf add > "$file"
-        done 2>/dev/null
-
-        # Handle USB devices.
-        for file in /sys/bus/usb/devices/*; do
-            case ${file##*/} in [0-9]*-[0-9]*)
-                printf add > "$file/uevent"
-            esac
-        done
     fi
 }
 
@@ -145,10 +134,14 @@ log "Loading sysctl settings..."; {
     done
 }
 
-# Kill udevd here to let the service manager
-# start it again and manage it properly.
-command -v udevd >/dev/null &&
-    udevadm control --exit
+log "Killing device manager to make way for service..."; {
+    if command -v udevd >/dev/null; then
+        udevadm control --exit
+
+    elif [ "$mdev_pid" ]; then
+        kill "$mdev_pid"
+    fi
+}
 
 log "Running rc.d hooks..."; {
     for file in /etc/rc.d/*.boot; do
