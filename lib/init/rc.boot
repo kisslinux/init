@@ -46,7 +46,14 @@ log "Starting device manager..."; {
     elif command -v mdev >/dev/null; then
         log "Starting mdev..."
 
-        printf /bin/mdev > /proc/sys/kernel/hotplug
+        # Try to set the hotplug script to mdev.
+        # This will silently fail if unavailable.
+        #
+        # The user should then run the mdev service
+        # to enable hotplugging.
+        printf /bin/mdev 2>/dev/null > \
+            /proc/sys/kernel/hotplug
+
         mdev -s
 
         # Create /dev/mapper nodes.
