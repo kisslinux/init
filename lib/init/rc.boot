@@ -46,7 +46,6 @@ log "Starting device manager..."; {
     elif command -v mdev >/dev/null; then
         log "Starting mdev..."
 
-        mdev -s
         mdev -df & mdev_pid=$!
 
         # Try to set the hotplug script to mdev.
