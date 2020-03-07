@@ -48,14 +48,6 @@ log "Starting device manager..."; {
 
         mdev -df & mdev_pid=$!
 
-        # Try to set the hotplug script to mdev.
-        # This will silently fail if unavailable.
-        #
-        # The user should then run the mdev service
-        # to enable hotplugging.
-        printf /bin/mdev 2>/dev/null \
-            > /proc/sys/kernel/hotplug
-
         # Create /dev/mapper nodes.
         [ -x /bin/dmsetup ] && dmsetup mknodes
     fi
@@ -139,6 +131,14 @@ log "Killing device manager to make way for service..."; {
 
     elif [ "$mdev_pid" ]; then
         kill "$mdev_pid"
+
+        # Try to set the hotplug script to mdev.
+        # This will silently fail if unavailable.
+        #
+        # The user should then run the mdev service
+        # to enable hotplugging.
+        printf /bin/mdev 2>/dev/null \
+            > /proc/sys/kernel/hotplug
     fi
 }
 
