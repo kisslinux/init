@@ -27,10 +27,15 @@ log "Mounting pseudo filesystems..."; {
 
     # udev created these for us, however other device managers
     # don't. This is fine even when udev is in use.
-    ln -sf /proc/self/fd /dev/fd
-    ln -sf fd/0          /dev/stdin
-    ln -sf fd/1          /dev/stdout
-    ln -sf fd/2          /dev/stderr
+    {
+        ln -sf /proc/self/fd /dev/fd
+
+        # Check that these don't already exist as symlinks to
+        # avoid issues when KISS is used with Bedrock Linux.
+        [ -h fd/0 ] || ln -sf fd/0 /dev/stdin
+        [ -h fd/1 ] || ln -sf fd/1 /dev/stdout
+        [ -h fd/2 ] || ln -sf fd/2 /dev/stderr
+    }
 }
 
 log "Starting device manager..."; {
