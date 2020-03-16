@@ -34,7 +34,16 @@ log "Sending KILL signal to all processes..."; {
 
 log "Unmounting filesystems and disabling swap..."; {
     swapoff -a
+
+    # Lazily unmount the filesystem prior to the regular
+    # umount command to fix issues with Bedrock Linux.
+    #
+    # Busybx umount '-a' doesn't take children into account
+    # the addition of the command containing '-l' works
+    # around this issue.
+    umount -a -l
     umount -a
+
     mount -o remount,ro /
     sync
 }
