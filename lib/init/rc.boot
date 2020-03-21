@@ -49,6 +49,7 @@ log "Starting device manager..."; {
     elif command -v mdev >/dev/null; then
         log "Starting mdev..."
 
+        mdev -s
         mdev -df & mdev_pid=$!
 
         # Create /dev/mapper nodes.
