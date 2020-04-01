@@ -93,6 +93,7 @@ log "Enabling swap..."; {
 log "Seeding random..."; {
     if [ -f /var/random.seed ]; then
         cat /var/random.seed > /dev/urandom
+
     else
         log "This may hang."
         log "Mash the keyboard to generate entropy..."
