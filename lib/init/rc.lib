@@ -39,28 +39,27 @@ parse_crypttab() {
         }
 
         # Turn 'UUID=*', 'LABEL=*', 'PARTUUID=*' lines into device names.
-        case ${dev%%=*} in
-            UUID|LABEL|PARTUUID)
-                set -f; for line in $(blkid); do
-                    case ${line%%=*} in
-                        /dev/*)
-                            _dev=${line%:}
-                        ;;
-                        UUID|LABEL|PARTUUID)
-                            [ "$_dev" ] || continue
+        case ${dev%%=*} in UUID|LABEL|PARTUUID)
+            set -f; for line in $(blkid); do
+                case ${line%%=*} in
+                    /dev/*)
+                        _dev=${line%:}
+                    ;;
 
-                            _line=${line##*=}
-                            _line=${_line%\"}
-                            _line=${_line#\"}
+                    UUID|LABEL|PARTUUID)
+                        [ "$_dev" ] || continue
 
-                            [ "$_line" = "${dev##*=}" ] && {
-                                dev=${_dev}
-                                break
-                            }
-                        ;;
-                    esac
-                done; set +f
-            ;;
+                        _line=${line##*=}
+                        _line=${_line%\"}
+                        _line=${_line#\"}
+
+                        [ "$_line" = "${dev##*=}" ] && {
+                            dev=${_dev}
+                            break
+                        }
+                    ;;
+                esac
+            done; set +f
         esac
 
         # Sanity check.
