@@ -38,8 +38,33 @@ parse_crypttab() {
             break
         }
 
-        # Turn 'UUID=*' lines into device names.
-        [ "${dev##UUID*}" ] || dev=$(blkid -l -o device -t "$dev")
+        # Turn 'UUID=*', 'LABEL=*', 'PARTUUID=*' lines into device names.
+        case ${dev%%=*} in
+            UUID|LABEL|PARTUUID)
+                set -f; for line in $(blkid); do
+                    case ${line%%=*} in
+                        /dev/*)
+                            _dev=${line%:}
+                        ;;
+                        UUID|LABEL|PARTUUID)
+                            [ "$_dev" ] || continue
+
+                            _line=${line##*=}
+                            _line=${_line%\"}
+                            _line=${_line#\"}
+
+                            [ "$_line" = "${dev##*=}" ] && {
+                                dev=${_dev}
+                                break
+                            }
+                        ;;
+                    esac
+                done; set +f
+            ;;
+        esac
+
+        # Sanity check.
+        case "$dev" in /dev/*) ;; *) sos; esac
 
         # Parse options by turning the list into a pseudo array.
         { old_ifs=$IFS; IFS=,; set -f; set +f -- $opts; IFS=$old_ifs; }
