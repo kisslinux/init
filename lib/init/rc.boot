@@ -43,7 +43,6 @@ log "Starting device manager..."; {
         udevd -d
         udevadm trigger -c add    -t subsystems
         udevadm trigger -c add    -t devices
-        udevadm trigger -c change -t devices
         udevadm settle
 
     elif command -v mdev >/dev/null; then
