@@ -117,7 +117,7 @@ log "Loading sysctl settings..."; {
                 /usr/lib/sysctl.d/*.conf \
                 /etc/sysctl.conf; do
 
-        [ -f "$conf" ] || break
+        [ -f "$conf" ] || continue
 
         seen="$seen ${conf##*/}"
 
