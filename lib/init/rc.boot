@@ -6,8 +6,15 @@
 
 log "Welcome to KISS!"
 
-log "Mounting pseudo filesystems..."; {
+log "Mounting /proc..."; {
     mnt /proc -o nosuid,noexec,nodev    -t proc     proc
+
+    # Start counting the boot time. This is the earliest
+    # in the boot process in which we can do so.
+    IFS=. read -r start _ < /proc/uptime
+}
+
+log "Mounting pseudo filesystems..."; {
     mnt /sys  -o nosuid,noexec,nodev    -t sysfs    sys
     mnt /run  -o mode=0755,nosuid,nodev -t tmpfs    run
     mnt /dev  -o mode=0755,nosuid       -t devtmpfs dev
@@ -148,4 +155,8 @@ log "Running rc.d hooks..."; {
     done
 }
 
-log "Boot stage complete..."
+# Calculate how long the boot process took to
+# complete. This entire process is too cheap!
+IFS=. read -r end _ < /proc/uptime
+
+log "Boot stage completed in $((end - start))s..."
