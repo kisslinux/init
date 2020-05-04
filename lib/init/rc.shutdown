@@ -59,8 +59,9 @@ log "Remounting rootfs read-only"; {
 
 log "Deactivating dmcrypt devices (if any exist)."; {
     [ -x /bin/cryptsetup ] && [ -x /bin/dmsetup ] && {
-        dmsetup ls --target crypt \
-                   --exec "dmsetup info -c --noheadings -o open,name" |
+        dmsetup ls \
+            --target crypt \
+            --exec "dmsetup info -c --noheadings -o open,name" |
 
         while read -r drive; do
             cryptsetup close "${drive##*:}"
