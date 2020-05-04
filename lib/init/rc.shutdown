@@ -30,6 +30,7 @@ log "Sending TERM signal to all processes..."; {
 
 log "Sending KILL signal to all processes..."; {
     kall 9
+    sleep 1
 }
 
 log "Unmounting filesystems and disabling swap..."; {
