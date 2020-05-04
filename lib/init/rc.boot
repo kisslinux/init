@@ -7,7 +7,7 @@
 log "Welcome to KISS!"
 
 log "Mounting /proc..."; {
-    mnt /proc -o nosuid,noexec,nodev    -t proc     proc
+    mnt /proc -o nosuid,noexec,nodev -t proc proc
 
     # Start counting the boot time. This is the earliest
     # in the boot process in which we can do so.
@@ -15,9 +15,9 @@ log "Mounting /proc..."; {
 }
 
 log "Mounting pseudo filesystems..."; {
-    mnt /sys  -o nosuid,noexec,nodev    -t sysfs    sys
-    mnt /run  -o mode=0755,nosuid,nodev -t tmpfs    run
-    mnt /dev  -o mode=0755,nosuid       -t devtmpfs dev
+    mnt /sys -o nosuid,noexec,nodev    -t sysfs    sys
+    mnt /run -o mode=0755,nosuid,nodev -t tmpfs    run
+    mnt /dev -o mode=0755,nosuid       -t devtmpfs dev
 
     # Behavior is intentional and harmless if not.
     # shellcheck disable=2174
@@ -48,8 +48,8 @@ log "Starting device manager..."; {
         log "Starting udevd..."
 
         udevd -d
-        udevadm trigger -c add    -t subsystems
-        udevadm trigger -c add    -t devices
+        udevadm trigger -c add -t subsystems
+        udevadm trigger -c add -t devices
         udevadm settle
 
     elif command -v mdev >/dev/null; then

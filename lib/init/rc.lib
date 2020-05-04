@@ -12,13 +12,6 @@ log() {
     tee /dev/kmsg 2>/dev/null
 }
 
-mnt() {
-    mounted "$1" && return 0
-    dir=$1
-    shift
-    mount "$@" "$dir"
-}
-
 mounted() {
     # This is a pure shell mountpoint implementation. We're dealing
     # with basic (and fixed/known) input so this doesn't need to
@@ -33,6 +26,17 @@ mounted() {
     return 1
 }
 
+mnt() {
+    # Mount a filesystem if not already mounted. The 'set' and
+    # 'shift' simply move the first argument to the end of the
+    # argument list.
+    mounted "$1" || {
+        set -- "$@" "$1"
+        shift
+        mount "$@"
+    }
+}
+
 sos() {
     log "Init system encountered an error, starting emergency shell." \
         "When ready, type 'exit' to continue the boot."
@@ -41,8 +45,8 @@ sos() {
 }
 
 save_random() {
-    log "This may hang."
-    log "Mash the keyboard to generate entropy..."
+    log "This may hang." \
+        "Mash the keyboard to generate entropy..."
 
     dd count=1 bs=512 if=/dev/random of=/var/random.seed 2>/dev/null
 }
