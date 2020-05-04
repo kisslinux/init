@@ -50,7 +50,9 @@ log "Unmounting filesystems and disabling swap..."; {
     # flag is a part of the Linux base standard.
     umount -lat nosysfs,noproc,nodevtmpfs,notmpfs
     umount -rat nosysfs,noproc,nodevtmpfs,notmpfs
+}
 
+log "Remounting rootfs read-only"; {
     mount -o remount,ro /
     sync
 }
