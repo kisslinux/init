@@ -22,6 +22,13 @@ sos() {
     /bin/sh -l
 }
 
+save_random() {
+    log "This may hang."
+    log "Mash the keyboard to generate entropy..."
+
+    dd count=1 bs=512 if=/dev/random of=/var/random.seed 2>/dev/null
+}
+
 parse_crypttab() {
     # This is a pure shell crypttab parser which supports
     # a subset of the format.

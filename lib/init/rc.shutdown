@@ -20,7 +20,7 @@ log "Waiting for services to stop..."; {
 } >/dev/null 2>&1
 
 log "Saving random seed..."; {
-    dd count=1 bs=512 if=/dev/random of=/var/random.seed
+    save_random
 }
 
 log "Sending TERM signal to all processes..."; {
