@@ -5,7 +5,18 @@
 
 tty1::respawn:/sbin/getty 38400 tty1
 tty2::respawn:/sbin/getty 38400 tty2
-tty3::respawn:/sbin/getty 38400 tty3
-tty4::respawn:/sbin/getty 38400 tty4
-tty5::respawn:/sbin/getty 38400 tty5
-tty6::respawn:/sbin/getty 38400 tty6
+
+# Uncomment to enable more gettys.
+# tty3::respawn:/sbin/getty 38400 tty3
+# tty4::respawn:/sbin/getty 38400 tty4
+# tty5::respawn:/sbin/getty 38400 tty5
+# tty6::respawn:/sbin/getty 38400 tty6
+
+# Login directly as a user and bypass the login prompt.
+# NOTE: This bypasses the use of a getty altogether.
+#       The 'agetty' command from util-linux has support
+#       for auto-login without the above drawback.
+# tty1::respawn:/bin/login -f username_here
+
+# Run a one-shot command during boot.
+# ::once:/bin/modprobe iwlwifi
