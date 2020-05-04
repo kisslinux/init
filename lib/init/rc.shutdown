@@ -35,9 +35,6 @@ log "Sending KILL signal to all processes..."; {
 log "Unmounting filesystems and disabling swap..."; {
     swapoff -a
 
-    # Lazily unmount the filesystem prior to the regular
-    # umount command to fix rare but possible errors.
-    #
     # Skip unmounting pseudo filesystems as they may be
     # needed below for encryption and user shutdown scripts.
     #
@@ -48,7 +45,6 @@ log "Unmounting filesystems and disabling swap..."; {
     # This flag is unsupported by ubase and I consider this
     # a ubase issue. ubase only supports Linux and this
     # flag is a part of the Linux standard base.
-    umount -lat nosysfs,noproc,nodevtmpfs,notmpfs
     umount -rat nosysfs,noproc,nodevtmpfs,notmpfs
 }
 
