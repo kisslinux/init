@@ -37,8 +37,19 @@ log "Unmounting filesystems and disabling swap..."; {
 
     # Lazily unmount the filesystem prior to the regular
     # umount command to fix rare but possible errors.
-    umount -a -l
-    umount -a
+    #
+    # Skip unmounting pseudo filesystems as they may be
+    # needed below for encryption and user shutdown scripts.
+    #
+    # The '-t' flag is a part of the LSB standard and is
+    # supported by busybox, toybox, util-linux, FreeBSD,
+    # NetBSD, OpenBSD and others.
+    #
+    # This flag is unsupported by ubase and I consider this
+    # a ubase issue. ubase only supports Linux and this
+    # flag is a part of the Linux base standard.
+    umount -lat nosysfs,noproc,nodevtmpfs,notmpfs
+    umount -rat nosysfs,noproc,nodevtmpfs,notmpfs
 
     mount -o remount,ro /
     sync
