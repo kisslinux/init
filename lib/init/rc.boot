@@ -6,18 +6,11 @@
 
 log "Welcome to KISS!"
 
-log "Mounting /proc..."; {
-    mnt /proc -o nosuid,noexec,nodev -t proc proc
-
-    # Start counting the boot time. This is the earliest
-    # in the boot process in which we can do so.
-    IFS=. read -r start _ < /proc/uptime
-}
-
 log "Mounting pseudo filesystems..."; {
-    mnt /sys -o nosuid,noexec,nodev    -t sysfs    sys
-    mnt /run -o mode=0755,nosuid,nodev -t tmpfs    run
-    mnt /dev -o mode=0755,nosuid       -t devtmpfs dev
+    mnt /proc -o nosuid,noexec,nodev    -t proc     proc
+    mnt /sys  -o nosuid,noexec,nodev    -t sysfs    sys
+    mnt /run  -o mode=0755,nosuid,nodev -t tmpfs    run
+    mnt /dev  -o mode=0755,nosuid       -t devtmpfs dev
 
     # Behavior is intentional and harmless if not.
     # shellcheck disable=2174
@@ -157,6 +150,6 @@ log "Running rc.d hooks..."; {
 
 # Calculate how long the boot process took to
 # complete. This entire process is too cheap!
-IFS=. read -r end _ < /proc/uptime
+IFS=. read -r boot_time _ < /proc/uptime
 
-log "Boot stage completed in $((end - start))s..."
+log "Boot stage completed in ${boot_time}s..."
