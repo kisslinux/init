@@ -5,6 +5,9 @@
 #include <signal.h>
 #include <stdio.h>
 
+// This is a simple 'killall5' alternative to remove the
+// dependency on a rather unportable and "rare" tool for
+// the purposes of shutting down the machine.
 int main(int argc, char *argv[]) {
     struct dirent *ent;
     DIR *dir;

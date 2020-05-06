@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <sys/reboot.h>
 
+// This is a simple utility to instruct the kernel to shutdown
+// or reboot the machine. This runs at the end of the shutdown
+// process as an init-agnostic method of shutting down the system.
 int main (int argc, char *argv[]) {
     sync();
 
