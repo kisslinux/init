@@ -30,7 +30,7 @@ mnt() {
     # If the filesystem is already mounted, mount it again with
     # 'remount' so that it uses the correct mount options. This is
     # usually the case when dealing with an initramfs for example.
-    mounted "$4" && set -- "$1" "remount,$2" "$3" "$4"
+    mounted "$4" && set -- "remount,$1" "$2" "$3" "$4"
 
     mount -o "$1" -t "$2" "$3" "$4"
 }
