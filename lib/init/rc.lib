@@ -115,7 +115,7 @@ random_seed() {
 
     case $1 in
         save)
-            mkdir -p "${seed%/&}}" || {
+            mkdir -p "${seed%/*}" || {
                 log "Warning: Failed to create random seed directory."
                 return 1
             }
