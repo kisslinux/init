@@ -16,6 +16,7 @@ log "Mounting pseudo filesystems..."; {
     # shellcheck disable=2174
     mkdir -p /run/runit \
              /run/lvm   \
+             /run/cryptsetup \
              /run/user  \
              /run/lock  \
              /run/log   \
