@@ -40,7 +40,7 @@ log "Starting device manager..."; {
     if command -v udevd >/dev/null; then
         log "Starting udevd..."
 
-        udevd -dN never
+        udevd -d
         udevadm trigger -c add -t subsystems
         udevadm trigger -c add -t devices
         udevadm settle
