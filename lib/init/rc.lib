@@ -100,7 +100,7 @@ parse_crypttab() {
             discard)            copts="$copts --allow-discards" ;;
             readonly|read-only) copts="$copts -r" ;;
             tries=*)            copts="$copts -T ${opt##*=}" ;;
-            noauto)             continue 2 ;;
+            noauto)             copts=; continue 2 ;;
         esac; done
 
         # If password is 'none', '-' or empty ask for it.
@@ -108,6 +108,8 @@ parse_crypttab() {
             none|-|"") cryptsetup luksOpen $copts "$dev" "$name" <&3 ;;
             *)         cryptsetup luksOpen $copts -d "$pass" "$dev" "$name" ;;
         esac
+
+        copts=
     done < /etc/crypttab
 
     exec 3>&-
