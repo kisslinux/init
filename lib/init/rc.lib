@@ -42,11 +42,91 @@ sos() {
     /bin/sh -l
 }
 
-save_random() {
-    log "This may hang." \
-        "Mash the keyboard to generate entropy..."
+random_seed() {
+    # https://freenode.logbot.info/kisslinux/20200108/raw
+    # (Slightly modified to fit here as a series of comments.)
+    # 
+    # adamantium dylanaraps: I heard the way we "seed random" is not 
+    #            actually doing anything
+    # adamantium cat /var/random.seed > /dev/urandom
+    # adamantium Anyone know if this actually works?/
+    # dylanaraps You can try 'cat /proc/sys/kernel/random/entropy_avail' 
+    #            right after boot.
+    # dylanaraps > It is also possible to write to /dev/random. This allows 
+    #              any user to mix random data into the pool.
+    # dylanaraps https://en.wikipedia.org/wiki//dev/random
+    # dylanaraps I don't know if this also applies to /dev/urandom.
+    # dylanaraps I'll look for a source on this.
+    # dylanaraps > Writing to /dev/random or /dev/urandom will update the 
+    #              entropy pool with the data written, but this will not 
+    #              result in a higher entropy count. This means that it 
+    #              will impact the contents read from both files, but it 
+    #              will not make reads from /dev/random faster.
+    # dylanaraps > ... This differs from writing to /dev/random or 
+    #              /dev/urandom, which only adds some data but does not 
+    #              increment the entropy count.
+    # dylanaraps https://linux.die.net/man/4/urandom
+    # dylanaraps Also, this page shows how to seed the generator and it is 
+    #            exactly the same method we use.
+    # dylanaraps (Though we hardcode the pool size)
+    # dylanaraps If you're wondering why the pool size is hardcoded: 
+    #            https://wiki.archlinux.org/index.php/Random_number_generation
+    # dylanaraps > While Linux kernel 2.4 did have writable /proc entries 
+    #              for controlling the entropy pool size, in newer kernels 
+    #              only read_wakeup_threshold and write_wakeup_threshold 
+    #              are writable. The pool size is now hardcoded in kernel 
+    #              line 275 of /drivers/char/random.c
+    # dylanaraps > The kernel's pool size is given by 
+    #              INPUT_POOL_WORDS * OUTPUT_POOL_WORDS which makes, as 
+    #              already stated, 4096 bits.
+    # dylanaraps 4096 bits = 512 bytes (What we set it to)
+    # dylanaraps We use /dev/urandom over /dev/random so as to not block 
+    #            during boots. It was announced today that /dev/random in 
+    #            upcoming kernels won't block either so we'll eventually 
+    #            swap to it.
+    # dylanaraps The kernel for 4 years has actually seeded /dev/urandom 
+    #            itself in addition to our seeding (see this kernel commit): 
+    #            e192be9d9a30555aae2ca1dc3aad37cba484cd4a
+    # dylanaraps This whole process is a fickle mess of conflicting and 
+    #            unclear information so if we are doing this wrongly I'd 
+    #            like to fix it.
+    # dylanaraps If you have any experience here it'd be appreciated. :)
+    # dylanaraps The kernel also warns about reading /dev/urandom without 
+    #            entropy. https://patchwork.kernel.org/patch/9173499/
+    # adamantium Got it. dylanaraps I kniw nothing about this subject. 
+    #            fickle mess it is, then.
+    # dylanaraps Yup...
+    # dylanaraps Where did you hear about our seeding process possibly not 
+    #            working?
+    # adamantium Just a person in  #emacs who was looking at my elisp 
+    #            rewrite of it
+    # adamantium I think he is a knowledgable person, though, but from what 
+    #            you shared, I think he's probably wrong
+    # dylanaraps Systemd works the same more or less.
+    # dylanaraps See: systemd/src/random-seed/random-seed.c
+    # dylanaraps It also writes to /dev/urandom.
+    # adamantium cool
+    # dylanaraps All non-systemd distributions do it using our method or 
+    #            similar.
+    # adamantium So does systemE
+    # adamantium =)
+    # dylanaraps heh
+    seed=/var/lib/init/random-seed
 
-    dd count=1 bs=512 if=/dev/random of=/var/random.seed 2>/dev/null
+    case $1 in
+        save)
+            mkdir -p "${seed%/&}}" || {
+                log "Warning: Failed to create random seed directory."
+                return 1
+            }
+
+            dd count=1 bs=512 if=/dev/urandom of="$seed" 2>/dev/null
+        ;;
+
+        load) 
+            [ -f "$seed" ] && cat "$seed" > /dev/urandom
+        ;;
+    esac 
 }
 
 parse_crypttab() {

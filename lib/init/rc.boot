@@ -90,11 +90,7 @@ log "Enabling swap..."; {
 }
 
 log "Seeding random..."; {
-    if [ -f /var/random.seed ]; then
-        cat /var/random.seed > /dev/urandom
-    else
-        save_random
-    fi
+    random_seed load || random_seed save
 }
 
 log "Setting up loopback..."; {
