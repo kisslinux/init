@@ -7,10 +7,10 @@
 log "Welcome to KISS!"
 
 log "Mounting pseudo filesystems..."; {
-    mnt /proc -o nosuid,noexec,nodev    -t proc     proc
-    mnt /sys  -o nosuid,noexec,nodev    -t sysfs    sys
-    mnt /run  -o mode=0755,nosuid,nodev -t tmpfs    run
-    mnt /dev  -o mode=0755,nosuid       -t devtmpfs dev
+    mnt nosuid,noexec,nodev    proc     proc /proc 
+    mnt nosuid,noexec,nodev    sysfs    sys  /sys  
+    mnt mode=0755,nosuid,nodev tmpfs    run  /run  
+    mnt mode=0755,nosuid       devtmpfs dev  /dev  
 
     # Behavior is intentional and harmless if not.
     # shellcheck disable=2174
@@ -23,8 +23,8 @@ log "Mounting pseudo filesystems..."; {
              /dev/pts   \
              /dev/shm
 
-    mnt /dev/pts -o mode=0620,gid=5,nosuid,noexec -nt devpts devpts
-    mnt /dev/shm -o mode=1777,nosuid,nodev        -nt tmpfs  shm
+    mnt mode=0620,gid=5,nosuid,noexec devpts devpts /dev/pts 
+    mnt mode=1777,nosuid,nodev        tmpfs  shm    /dev/shm 
 
     # udev created these for us, however other device managers
     # don't. This is fine even when udev is in use.
