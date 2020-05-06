@@ -14,13 +14,13 @@ log "Mounting pseudo filesystems..."; {
 
     # Behavior is intentional and harmless if not.
     # shellcheck disable=2174
-    mkdir -pm 0755 /run/runit \
-                   /run/lvm   \
-                   /run/user  \
-                   /run/lock  \
-                   /run/log   \
-                   /dev/pts   \
-                   /dev/shm
+    mkdir -p /run/runit \
+             /run/lvm   \
+             /run/user  \
+             /run/lock  \
+             /run/log   \
+             /dev/pts   \
+             /dev/shm
 
     mnt /dev/pts -o mode=0620,gid=5,nosuid,noexec -nt devpts devpts
     mnt /dev/shm -o mode=1777,nosuid,nodev        -nt tmpfs  shm
