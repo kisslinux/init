@@ -33,7 +33,7 @@ log "Mounting pseudo filesystems..."; {
         ln -s fd/0          /dev/stdin
         ln -s fd/1          /dev/stdout
         ln -s fd/2          /dev/stderr
-    } 2>dev/null
+    } 2>/dev/null
 }
 
 log "Starting device manager..."; {
