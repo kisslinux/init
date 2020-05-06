@@ -100,6 +100,7 @@ parse_crypttab() {
             discard)            copts="$copts --allow-discards" ;;
             readonly|read-only) copts="$copts -r" ;;
             tries=*)            copts="$copts -T ${opt##*=}" ;;
+            noauto)             continue 2 ;;
         esac; done
 
         # If password is 'none', '-' or empty ask for it.
