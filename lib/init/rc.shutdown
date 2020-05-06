@@ -20,7 +20,7 @@ log "Waiting for services to stop..."; {
 } >/dev/null 2>&1
 
 log "Saving random seed..."; {
-    save_random
+    random_seed save
 }
 
 log "Sending TERM signal to all processes..."; {
