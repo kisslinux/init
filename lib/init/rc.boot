@@ -90,7 +90,7 @@ log "Enabling swap..."; {
 }
 
 log "Seeding random..."; {
-    random_seed load || random_seed save
+    random_seed load
 }
 
 log "Setting up loopback..."; {

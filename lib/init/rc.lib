@@ -120,11 +120,11 @@ random_seed() {
                 return 1
             }
 
-            dd count=1 bs=512 if=/dev/urandom of="$seed" 2>/dev/null
+            dd count=1 bs=512 if=/dev/urandom of="$seed" >/dev/null 2>&1
         ;;
 
         load) 
-            [ -f "$seed" ] && cat "$seed" > /dev/urandom
+            cp -f "$seed" /dev/urandom >/dev/null 2>&1
         ;;
     esac 
 }
