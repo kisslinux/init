@@ -49,20 +49,27 @@ log "Unmounting filesystems and disabling swap..."; {
     umount -rat nosysfs,noproc,nodevtmpfs,notmpfs
 }
 
-log "Remounting rootfs read-only"; {
+log "Remounting rootfs read-only..."; {
     mount -o remount,ro /
     sync
 }
 
-log "Deactivating dmcrypt devices (if any exist)."; {
+log "Deactivating LVM devices (if any exist)..."; {
+    [ -x /bin/lvm ] && trigger_lvm shutdown
+}
+
+log "Deactivating dm-crypt devices (if any exist)..."; {
     [ -x /bin/cryptsetup ] && [ -x /bin/dmsetup ] && {
-        dmsetup ls \
-            --target crypt \
-            --exec "dmsetup info -c --noheadings -o open,name" |
+        dmsetup info --noheadings \
+        --target crypt -c -o name |
 
         while read -r drive; do
-            cryptsetup close "${drive##*:}"
+            cryptsetup close "$drive"
         done
+    }
+
+    log "Deactivating LVM devices for dm-crypt (if any exist)..."; {
+        [ -x /bin/lvm ] && trigger_lvm shutdown
     }
 }
 

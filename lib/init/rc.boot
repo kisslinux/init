@@ -38,7 +38,7 @@ log "Mounting pseudo filesystems..."; {
 
 log "Starting device manager..."; {
     if command -v udevd >/dev/null; then
-        log "Starting udevd..."
+        log "Starting udev..."
 
         udevd -d
         udevadm trigger -c add -t subsystems
@@ -56,11 +56,15 @@ log "Starting device manager..."; {
     fi
 }
 
-log "Remounting rootfs as ro..."; {
+log "Remounting rootfs read-only..."; {
     mount -o remount,ro / || sos
 }
 
-log "Activating encrypted devices (if any exist)..."; {
+log "Activating LVM devices (if any exist)..."; {
+    [ -x /bin/lvm ] && trigger_lvm boot
+}
+
+log "Activating dm-crypt devices (if any exist)..."; {
     [ -e /etc/crypttab ] && [ -x /bin/cryptsetup ] &&
         parse_crypttab
 }
@@ -77,7 +81,7 @@ log "Checking filesystems..."; {
     [ $? -gt 1 ] && sos
 }
 
-log "Mounting rootfs rw..."; {
+log "Remounting rootfs read-write..."; {
     mount -o remount,rw / || sos
 }
 
@@ -89,7 +93,7 @@ log "Enabling swap..."; {
     swapon -a || sos
 }
 
-log "Seeding random..."; {
+log "Seeding random seed..."; {
     random_seed load
 }
 
@@ -121,11 +125,15 @@ log "Loading sysctl settings..."; {
     done
 }
 
-log "Killing device manager to make way for service..."; {
+log "Stopping device manager to make way for service..."; {
     if command -v udevd >/dev/null; then
+        log "Stopping udev..."
+
         udevadm control --exit
 
-    elif [ "$mdev_pid" ]; then
+    elif command -v mdev >/dev/null; then
+        log "Stopping mdev..."
+
         kill "$mdev_pid"
 
         # Try to set the hotplug script to mdev.
@@ -138,7 +146,7 @@ log "Killing device manager to make way for service..."; {
     fi
 }
 
-log "Running rc.d hooks..."; {
+log "Running boot hooks..."; {
     for file in /etc/rc.d/*.boot; do
         [ -f "$file" ] && . "$file"
     done

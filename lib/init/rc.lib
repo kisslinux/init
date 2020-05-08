@@ -16,8 +16,7 @@ mounted() {
     # This is a pure shell mountpoint implementation. We're dealing
     # with basic (and fixed/known) input so this doesn't need to
     # handle more complex cases.
-    [ -e "$1" ]         || return 1
-    [ -e /proc/mounts ] || return 1
+    [ -e "$1" ] && [ -e /proc/mounts ] || return 1
 
     while read -r _ target _; do
         [ "$target" = "$1" ] && return 0
@@ -129,6 +128,17 @@ random_seed() {
     esac 
 }
 
+trigger_lvm() {
+    case "$1" in
+        boot)
+            lvm vgchange --sysinit -aay
+        ;;
+        shutdown)
+            lvm vgchange --sysinit -an
+        ;;
+    esac
+}
+
 parse_crypttab() {
     # This is a pure shell crypttab parser which supports
     # a subset of the format.
@@ -141,7 +151,7 @@ parse_crypttab() {
 
         # Break on invalid crypttab (> 5 columns).
         [ "$err" ] && {
-            printf 'error: A valid crypttab has only 4 columns.\n'
+            log "Warning: A valid crypttab has only 4 columns."
             break
         }
 
@@ -154,8 +164,6 @@ parse_crypttab() {
                     ;;
 
                     UUID|LABEL|PARTUUID)
-                        [ "$_dev" ] || continue
-
                         _line=${line##*=}
                         _line=${_line%\"}
                         _line=${_line#\"}
@@ -170,7 +178,10 @@ parse_crypttab() {
         esac
 
         # Sanity check.
-        case "$dev" in /dev/*) ;; *) sos; esac
+        [ "${dev##*/dev/*}" ] && {
+            log "Warning: Failed to resolve device name for dm-crypt."
+            break
+        }
 
         # Parse options by turning the list into a pseudo array.
         { old_ifs=$IFS; IFS=,; set -f; set +f -- $opts; IFS=$old_ifs; }
@@ -178,6 +189,7 @@ parse_crypttab() {
         # Create an argument list (no other way to do this in sh).
         for opt; do case $opt in
             discard)            copts="$copts --allow-discards" ;;
+            header=*)           copts="$copts --header=${opt##*=}" ;;
             readonly|read-only) copts="$copts -r" ;;
             tries=*)            copts="$copts -T ${opt##*=}" ;;
             noauto)             copts=; continue 2 ;;
@@ -185,8 +197,8 @@ parse_crypttab() {
 
         # If password is 'none', '-' or empty ask for it.
         case $pass in
-            none|-|"") cryptsetup luksOpen $copts "$dev" "$name" <&3 ;;
-            *)         cryptsetup luksOpen $copts -d "$pass" "$dev" "$name" ;;
+            none|-|"") cryptsetup open $copts "$dev" "$name" <&3 ;;
+            *)         cryptsetup open $copts -d "$pass" "$dev" "$name" ;;
         esac
 
         copts=
@@ -194,8 +206,7 @@ parse_crypttab() {
 
     exec 3>&-
 
-    [ "$copts" ] && [ -x /bin/vgchange ] && {
-        log "Activating LVM devices for dm-crypt..."
-        vgchange --sysinit -a y || sos
+    log "Activating LVM devices for dm-crypt (if any exist)..."; {
+        [ -x /bin/lvm ] && trigger_lvm boot
     }
 }
