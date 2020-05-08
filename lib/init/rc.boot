@@ -38,7 +38,7 @@ log "Mounting pseudo filesystems..."; {
 
 log "Starting device manager..."; {
     if command -v udevd >/dev/null; then
-        log "Starting udevd..."
+        log "Starting udev..."
 
         udevd -d
         udevadm trigger -c add -t subsystems
@@ -56,7 +56,7 @@ log "Starting device manager..."; {
     fi
 }
 
-log "Remounting rootfs as ro..."; {
+log "Remounting rootfs as read-only..."; {
     mount -o remount,ro / || sos
 }
 
