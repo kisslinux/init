@@ -68,10 +68,10 @@ log "Deactivating dm-crypt devices (if any exist)..."; {
                 cryptsetup close --deferred "${uuid#CRYPT-*-*-}"
             done < "$file"
         done
-    }
 
-    log "Deactivating LVM devices for dm-crypt (if any exist)..."; {
-        [ -x /bin/lvm ] && trigger_lvm shutdown
+        log "Deactivating LVM devices for dm-crypt (if any exist)..."; {
+            [ -x /bin/lvm ] && trigger_lvm shutdown
+        }
     }
 }
 

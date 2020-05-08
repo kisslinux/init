@@ -189,7 +189,7 @@ parse_crypttab() {
         # Create an argument list (no other way to do this in sh).
         for opt; do case $opt in
             discard)            copts="$copts --allow-discards" ;;
-            header=*)           copts="$copts --header=${opt##*=}" ;;
+            header=*)           copts="$copts --${opt}" ;;
             readonly|read-only) copts="$copts -r" ;;
             tries=*)            copts="$copts -T ${opt##*=}" ;;
             noauto)             copts=; continue 2 ;;
