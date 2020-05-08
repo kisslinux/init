@@ -124,13 +124,9 @@ log "Loading sysctl settings..."; {
 
 log "Stopping device manager to make way for service..."; {
     if command -v udevd >/dev/null; then
-        log "Stopping udev..."
-
         udevadm control --exit
 
-    elif command -v mdev >/dev/null; then
-        log "Stopping mdev..."
-
+    elif [ "$mdev_pid" ]; then
         kill "$mdev_pid"
 
         # Try to set the hotplug script to mdev.
