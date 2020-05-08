@@ -50,9 +50,6 @@ log "Starting device manager..."; {
 
         mdev -s
         mdev -df & mdev_pid=$!
-
-        # Create /dev/mapper nodes.
-        [ -x /bin/dmsetup ] && dmsetup mknodes
     fi
 }
 

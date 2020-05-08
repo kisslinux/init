@@ -59,12 +59,14 @@ log "Deactivating LVM devices (if any exist)..."; {
 }
 
 log "Deactivating dm-crypt devices (if any exist)..."; {
-    [ -x /bin/cryptsetup ] && [ -x /bin/dmsetup ] && {
-        dmsetup info --noheadings \
-        --target crypt -c -o name |
+    [ -x /bin/cryptsetup ] && {
+        for file in /sys/block/*/dm/uuid; do
+            while read -r uuid; do
+                [ -e "/dev/mapper/${uuid#CRYPT-*-*-}" ] ||
+                    continue
 
-        while read -r drive; do
-            cryptsetup close "$drive"
+                cryptsetup close "${uuid#CRYPT-*-*-}"
+            done < "$file"
         done
     }
 
