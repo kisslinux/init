@@ -65,7 +65,7 @@ log "Deactivating dm-crypt devices (if any exist)..."; {
                 [ -e "/dev/mapper/${uuid#CRYPT-*-*-}" ] ||
                     continue
 
-                cryptsetup close "${uuid#CRYPT-*-*-}"
+                cryptsetup close --deferred "${uuid#CRYPT-*-*-}"
             done < "$file"
         done
     }
