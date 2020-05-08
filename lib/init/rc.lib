@@ -180,7 +180,7 @@ parse_crypttab() {
         # Sanity check.
         [ "${dev##*/dev/*}" ] && {
             log "Warning: Failed to resolve device name for dm-crypt."
-            break
+            continue
         }
 
         # Parse options by turning the list into a pseudo array.
