@@ -15,8 +15,6 @@ log "Mounting pseudo filesystems..."; {
     # Behavior is intentional and harmless if not.
     # shellcheck disable=2174
     mkdir -p /run/runit \
-             /run/lvm   \
-             /run/cryptsetup \
              /run/user  \
              /run/lock  \
              /run/log   \
@@ -50,19 +48,11 @@ log "Starting device manager..."; {
 
         mdev -s
         mdev -df & mdev_pid=$!
-
-        # Create /dev/mapper nodes.
-        [ -x /bin/dmsetup ] && dmsetup mknodes
     fi
 }
 
 log "Remounting rootfs as read-only..."; {
     mount -o remount,ro / || sos
-}
-
-log "Activating encrypted devices (if any exist)..."; {
-    [ -e /etc/crypttab ] && [ -x /bin/cryptsetup ] &&
-        parse_crypttab
 }
 
 log "Loading rc.conf settings..."; {
@@ -112,12 +102,11 @@ log "Loading sysctl settings..."; {
 
         [ -f "$conf" ] || continue
 
-        seen="$seen ${conf##*/}"
+        # Skip conf files we have already seen (basename match).
+        case $seen in *" ${conf##*/} "*) continue; esac
+        seen=" $seen ${conf##*/} "
 
-        case $seen in
-            *" ${conf##*/} "*) ;;
-            *) sysctl -p "$conf" ;;
-        esac
+        sysctl -p "$conf"
     done
 }
 

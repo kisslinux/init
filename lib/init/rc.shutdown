@@ -54,18 +54,6 @@ log "Remounting rootfs read-only"; {
     sync
 }
 
-log "Deactivating dmcrypt devices (if any exist)."; {
-    [ -x /bin/cryptsetup ] && [ -x /bin/dmsetup ] && {
-        dmsetup ls \
-            --target crypt \
-            --exec "dmsetup info -c --noheadings -o open,name" |
-
-        while read -r drive; do
-            cryptsetup close "${drive##*:}"
-        done
-    }
-}
-
 log "Running shutdown post hooks..."; {
     for file in /etc/rc.d/*.post.shutdown; do
         [ -f "$file" ] && . "$file"
