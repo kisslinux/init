@@ -128,10 +128,7 @@ log "Killing device manager to make way for service..."; {
 }
 
 log "Running boot hooks..."; {
-    for file in /usr/lib/init/rc.d/*.boot \
-                /etc/rc.d/*.boot; do
-        [ -f "$file" ] && . "$file"
-    done
+    run_hook boot
 }
 
 # Calculate how long the boot process took to

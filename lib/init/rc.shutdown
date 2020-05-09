@@ -9,10 +9,7 @@ log "Loading rc.conf settings..."; {
 }
 
 log "Running shutdown pre hooks..."; {
-    for file in /usr/lib/init/rc.d/*.pre.shutdown \
-                /etc/rc.d/*.pre.shutdown; do
-        [ -f "$file" ] && . "$file"
-    done
+    run_hook pre.shutdown
 }
 
 log "Waiting for services to stop..."; {
@@ -56,10 +53,7 @@ log "Remounting rootfs as read-only"; {
 }
 
 log "Running shutdown post hooks..."; {
-    for file in /usr/lib/init/rc.d/*.post.shutdown \
-                /etc/rc.d/*.post.shutdown; do
-        [ -f "$file" ] && . "$file"
-    done
+    run_hook post.shutdown
 }
 
 # Run 'kpow' to signal to the kernel that we want to reboot or
