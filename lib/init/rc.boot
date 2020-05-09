@@ -128,7 +128,8 @@ log "Killing device manager to make way for service..."; {
 }
 
 log "Running boot hooks..."; {
-    for file in /etc/rc.d/*.boot; do
+    for file in /usr/lib/init/rc.d/*.boot \
+                /etc/rc.d/*.boot; do
         [ -f "$file" ] && . "$file"
     done
 }
