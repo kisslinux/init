@@ -7,10 +7,10 @@
 log "Welcome to KISS!"
 
 log "Mounting pseudo filesystems..."; {
-    mnt nosuid,noexec,nodev    proc     proc /proc 
-    mnt nosuid,noexec,nodev    sysfs    sys  /sys  
-    mnt mode=0755,nosuid,nodev tmpfs    run  /run  
-    mnt mode=0755,nosuid       devtmpfs dev  /dev  
+    mnt nosuid,noexec,nodev    proc     proc /proc
+    mnt nosuid,noexec,nodev    sysfs    sys  /sys
+    mnt mode=0755,nosuid,nodev tmpfs    run  /run
+    mnt mode=0755,nosuid       devtmpfs dev  /dev
 
     # Behavior is intentional and harmless if not.
     # shellcheck disable=2174
@@ -21,8 +21,8 @@ log "Mounting pseudo filesystems..."; {
              /dev/pts   \
              /dev/shm
 
-    mnt mode=0620,gid=5,nosuid,noexec devpts devpts /dev/pts 
-    mnt mode=1777,nosuid,nodev        tmpfs  shm    /dev/shm 
+    mnt mode=0620,gid=5,nosuid,noexec devpts devpts /dev/pts
+    mnt mode=1777,nosuid,nodev        tmpfs  shm    /dev/shm
 
     # udev created these for us, however other device managers
     # don't. This is fine even when udev is in use.
@@ -67,7 +67,7 @@ log "Checking filesystems..."; {
     [ $? -gt 1 ] && sos
 }
 
-log "Mounting rootfs rw..."; {
+log "Mounting rootfs as read-write..."; {
     mount -o remount,rw / || sos
 }
 
@@ -127,7 +127,7 @@ log "Killing device manager to make way for service..."; {
     fi
 }
 
-log "Running rc.d hooks..."; {
+log "Running boot hooks..."; {
     for file in /etc/rc.d/*.boot; do
         [ -f "$file" ] && . "$file"
     done
