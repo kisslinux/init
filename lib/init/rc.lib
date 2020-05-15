@@ -39,7 +39,7 @@ sos() {
     log "Init system encountered an error, starting emergency shell." \
         "When ready, type 'exit' to continue the boot."
 
-    /bin/sh -l
+    /bin/sh
 }
 
 run_hook() {
