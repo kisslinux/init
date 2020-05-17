@@ -122,9 +122,8 @@ log "Killing device manager to make way for service..."; {
         #
         # The user should then run the mdev service
         # to enable hotplugging.
-        printf /bin/mdev 2>/dev/null \
-            > /proc/sys/kernel/hotplug
-    fi
+        command -v mdev > /proc/sys/kernel/hotplug
+    fi 2>/dev/null
 }
 
 log "Running boot hooks..."; {
