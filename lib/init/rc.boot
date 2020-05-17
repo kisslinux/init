@@ -34,6 +34,10 @@ log "Mounting pseudo filesystems..."; {
     } 2>/dev/null
 }
 
+log "Loading rc.conf settings..."; {
+    [ -f /etc/rc.conf ] && . /etc/rc.conf
+}
+
 log "Starting device manager..."; {
     if command -v udevd >/dev/null; then
         log "Starting udev..."
@@ -53,10 +57,6 @@ log "Starting device manager..."; {
 
 log "Remounting rootfs as read-only..."; {
     mount -o remount,ro / || sos
-}
-
-log "Loading rc.conf settings..."; {
-    [ -f /etc/rc.conf ] && . /etc/rc.conf
 }
 
 log "Checking filesystems..."; {
