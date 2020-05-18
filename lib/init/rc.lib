@@ -133,7 +133,7 @@ random_seed() {
         ;;
 
         load)
-            cp -f "$seed" /dev/urandom >/dev/null 2>&1
+            [ -f "$seed" ] && cat "$seed" > /dev/urandom
         ;;
     esac
 }
