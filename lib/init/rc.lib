@@ -9,7 +9,7 @@ log() {
 
     # Additionally send all messages to /dev/kmsg so that they
     # appear in 'dmesg' and can be read post-boot.
-    printf '=> %s\n' "$@" 2>/dev/null > /dev/kmsg
+    printf 'init: %s\n' "$@" 2>/dev/null > /dev/kmsg
 }
 
 mounted() {
