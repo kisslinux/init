@@ -5,11 +5,11 @@
 # the rc.boot and rc.shutdown scripts.
 
 log() {
-    printf '\033[31;1m=>\033[m %s\n' "$@" |
+    printf '\033[31;1m=>\033[m %s\n' "$@"
 
     # Additionally send all messages to /dev/kmsg so that they
     # appear in 'dmesg' and can be read post-boot.
-    tee /dev/kmsg 2>/dev/null
+    printf '=> %s\n' "$@" 2>/dev/null > /dev/kmsg
 }
 
 mounted() {
