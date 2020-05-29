@@ -7,9 +7,14 @@
 log() {
     printf '\033[31;1m=>\033[m %s\n' "$@"
 
+    # Only print to /dev/kmsg and /dev/null if they both exist.
+    # This will fail late in the shutdown process and possibly
+    # early on in the boot-up process.
+    [ -w /dev/null ] && [ -w /dev/kmsg ] &&
+
     # Additionally send all messages to /dev/kmsg so that they
     # appear in 'dmesg' and can be read post-boot.
-    printf 'init: %s\n' "$@" 2>/dev/null > /dev/kmsg
+    printf 'init: %s\n' "$@" 2>/dev/null >/dev/kmsg
 }
 
 mounted() {
