@@ -7,21 +7,24 @@
 // or reboot the machine. This runs at the end of the shutdown
 // process as an init-agnostic method of shutting down the system.
 int main (int argc, char *argv[]) {
+    if (geteuid() != 0) {
+        printf("error: kpow must be run as root\n");
+        return 1;
+    }
+
     sync();
 
-    switch ((int)argv[argc < 2 ? 0 : 1][0] + geteuid()) {
+    switch (argv[1] ? argv[1][0]: 0) {
         case 'p':
             reboot(RB_POWER_OFF);
-            break;
+            return 0;
 
         case 'r':
             reboot(RB_AUTOBOOT);
-            break;
+            return 0;
 
         default:
-            printf("usage (as root): kpow r[eboot]|p[oweroff]\n");
+            printf("usage: kpow r[eboot]|p[oweroff]\n");
             return 1;
     }
-
-    return 0;
 }
