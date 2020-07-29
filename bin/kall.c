@@ -1,4 +1,4 @@
-#define _POSIX_SOURCE
+#define _POSIX_C_SOURCE 200809L
 #include <dirent.h>
 #include <inttypes.h>
 #include <unistd.h>
@@ -11,13 +11,18 @@
 int main(int argc, char *argv[]) {
     struct dirent *ent;
     DIR *dir;
-    int pid, sig = SIGTERM;
+    int pid;
+    int sig = SIGTERM;
 
-    if (argc > 1)
+    if (argc > 1) {
         sig = strtoimax(argv[1], 0, 10);
+    }
 
-    if (!(dir = opendir("/proc")))
+    dir = opendir("/proc");
+
+    if (!dir) {
         return 1;
+    }
 
     kill(-1, SIGSTOP);
 
@@ -25,13 +30,15 @@ int main(int argc, char *argv[]) {
         pid = strtoimax(ent->d_name, 0, 10);
 
         if (pid < 2 || pid == getpid() ||
-            getsid(pid) == getsid(0) || getsid(pid) == 0)
+            getsid(pid) == getsid(0) ||
+            getsid(pid) == 0) {
             continue;
+        }
 
         kill(pid, sig);
     }
-    closedir(dir);
 
+    closedir(dir);
     kill(-1, SIGCONT);
 
     return 0;
