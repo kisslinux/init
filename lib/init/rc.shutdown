@@ -42,7 +42,7 @@ log "Unmounting filesystems and disabling swap..."; {
     # This flag is unsupported by ubase and I consider this
     # a ubase issue. ubase only supports Linux and this
     # flag is a part of the Linux standard base.
-    umount -rat nosysfs,noproc,nodevtmpfs,notmpfs
+    umount -rat nosysfs,proc,devtmpfs,tmpfs
 }
 
 log "Remounting rootfs as read-only"; {
