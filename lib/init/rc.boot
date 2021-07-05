@@ -34,18 +34,18 @@ log "Loading rc.conf settings..."; {
 
 log "Starting device manager..."; {
     if command -v udevd >/dev/null; then
-        log "Starting udev..."
-
         udevd -d
         udevadm trigger -c add -t subsystems
         udevadm trigger -c add -t devices
         udevadm settle
 
-    elif command -v mdev >/dev/null; then
-        log "Starting mdev..."
+    elif command -v mdevd >/dev/null; then
+        mdevd-coldplug
+        mdevd & pid_mdevd=$!
 
+    elif command -v mdev >/dev/null; then
         mdev -s
-        mdev -df & mdev_pid=$!
+        mdev -df & pid_mdev=$!
     fi
 }
 
@@ -108,15 +108,14 @@ log "Killing device manager to make way for service..."; {
     if command -v udevd >/dev/null; then
         udevadm control --exit
 
-    elif [ "$mdev_pid" ]; then
-        kill "$mdev_pid"
+    elif [ "$pid_mdevd" ]; then
+        kill "$pid_mdevd"
+        command -v mdevd > /proc/sys/kernel/hotplug
 
-        # Try to set the hotplug script to mdev.
-        # This will silently fail if unavailable.
-        #
-        # The user should then run the mdev service
-        # to enable hotplugging.
+    elif [ "$pid_mdev" ]; then
+        kill "$pid_mdev"
         command -v mdev > /proc/sys/kernel/hotplug
+
     fi 2>/dev/null
 }
 
