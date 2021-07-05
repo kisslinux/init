@@ -110,7 +110,6 @@ log "Killing device manager to make way for service..."; {
 
     elif [ "$pid_mdevd" ]; then
         kill "$pid_mdevd"
-        command -v mdevd > /proc/sys/kernel/hotplug
 
     elif [ "$pid_mdev" ]; then
         kill "$pid_mdev"
