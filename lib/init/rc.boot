@@ -40,8 +40,8 @@ log "Starting device manager..."; {
         udevadm settle
 
     elif command -v mdevd >/dev/null; then
-        mdevd-coldplug
         mdevd & pid_mdevd=$!
+        mdevd-coldplug
 
     elif command -v mdev >/dev/null; then
         mdev -s
