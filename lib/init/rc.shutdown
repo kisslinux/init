@@ -13,9 +13,7 @@ log "Running shutdown pre hooks..."; {
 }
 
 log "Waiting for services to stop..."; {
-    : "${CONFIG_SERVICE_DIR:=/var/service}"
-
-    case ${CONFIG_SERVICE:=runit} in
+    case $CONFIG_SERVICE in
         s6)
             case $CONFIG_INIT in
                 s6)
