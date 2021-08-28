@@ -12,6 +12,18 @@ log "Running shutdown pre hooks..."; {
     run_hook pre.shutdown
 }
 
+log "Waiting for services to stop..."; {
+    case ${CONFIG_SERVICE:=runit} in
+        runit)
+            sv force-shutdown /var/service/*
+        ;;
+
+        s6)
+            s6-svscanctl -t /var/service
+        ;;
+    esac
+}
+
 log "Saving random seed..."; {
     random_seed save
 }
@@ -28,16 +40,14 @@ log "Sending KILL signal to all processes..."; {
 log "Unmounting filesystems and disabling swap..."; {
     swapoff -a
 
-    # Skip unmounting pseudo filesystems as they may be
-    # needed below for encryption and user shutdown scripts.
+    # Skip unmounting pseudo filesystems as they may be needed below for
+    # encryption and user shutdown scripts.
     #
-    # The '-t' flag is a part of the LSB standard and is
-    # supported by busybox, toybox, util-linux, FreeBSD,
-    # NetBSD, OpenBSD and others.
+    # The '-t' flag is a part of the LSB standard and is supported by busybox,
+    # toybox, util-linux, FreeBSD, NetBSD, OpenBSD and others.
     #
-    # This flag is unsupported by ubase and I consider this
-    # a ubase issue. ubase only supports Linux and this
-    # flag is a part of the Linux standard base.
+    # This flag is unsupported by ubase and I consider this a ubase issue. ubase
+    # only supports Linux and this flag is a part of the Linux standard base.
     umount -rat nosysfs,proc,devtmpfs,tmpfs
 }
 
@@ -50,10 +60,10 @@ log "Running shutdown post hooks..."; {
     run_hook post.shutdown
 }
 
-# Run 'kpow' to signal to the kernel that we want to reboot or
-# poweroff the system. These will only run when '$1' contains
-# a valid action. When busybox init is used, this code is
-# ignored entirely as it handles this itself.
+# Run 'kpow' to signal to the kernel that we want to reboot or poweroff the
+# system. These will only run when '$1' contains a valid action. When busybox
+# init is used for example, this code is ignored entirely as it handles this
+# itself.
 case $1 in
     reboot)   kpow r ;;
     poweroff) kpow p ;;

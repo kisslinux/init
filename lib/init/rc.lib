@@ -56,6 +56,21 @@ run_hook() {
     done
 }
 
+run_exec() {
+    case ${CONFIG_INIT:=busybox} in
+        busybox)
+            # busybox init does not handle signals until this process ends so we
+            # cannot use 'exec' here without breaking the reboot and poweroff
+            # commands.
+            setsid "$@" &
+        ;;
+
+        *)
+            exec "$@"
+        ;;
+    esac
+}
+
 random_seed() {
     # https://freenode.logbot.info/kisslinux/20200108/raw
     # (Slightly modified to fit here as a series of comments.)

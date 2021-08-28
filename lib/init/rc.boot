@@ -133,3 +133,20 @@ log "Running boot hooks..."; {
 IFS=. read -r boot_time _ < /proc/uptime
 
 log "Boot stage completed in ${boot_time}s..."
+
+log "Replacing rc.boot with service manager..."; {
+    case ${CONFIG_SERVICE:=runit} in
+        s6)
+            run_exec s6-svscan /var/service
+        ;;
+
+        runit)
+            run_exec respawn /usr/bin/runsvdir -P /var/service 'log: ...............................................................................................................................................................................................................................................................'
+        ;;
+
+        none-getty)
+            run_exec respawn /usr/bin/getty 38400 tty1
+        ;;
+    esac
+}
+
