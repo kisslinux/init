@@ -12,8 +12,7 @@ log "Mounting pseudo filesystems..."; {
     mnt mode=0755,nosuid,nodev tmpfs    run  /run
     mnt mode=0755,nosuid       devtmpfs dev  /dev
 
-    mkdir -p /run/runit /run/user /run/lock \
-             /run/log   /dev/pts  /dev/shm
+    mkdir -p /run/user /run/lock /run/log /dev/pts /dev/shm
 
     mnt mode=0620,gid=5,nosuid,noexec devpts devpts /dev/pts
     mnt mode=1777,nosuid,nodev        tmpfs  shm    /dev/shm
