@@ -5,7 +5,7 @@
 . /usr/lib/init/rc.lib
 
 log "Loading rc.conf settings..."; {
-    [ -f /etc/rc.conf ] && . /etc/rc.conf
+    load_conf
 }
 
 log "Running shutdown pre hooks..."; {
@@ -13,13 +13,15 @@ log "Running shutdown pre hooks..."; {
 }
 
 log "Waiting for services to stop..."; {
+    : "${CONFIG_SERVICE_DIR:=/var/service}"
+
     case ${CONFIG_SERVICE:=runit} in
         runit)
-            sv force-shutdown /var/service/*
+            sv force-shutdown "$CONFIG_SERVICE_DIR/"*
         ;;
 
         s6)
-            s6-svscanctl -t /var/service
+            s6-svscanctl -t "$CONFIG_SERVICE_DIR"
         ;;
     esac
 }
@@ -60,11 +62,4 @@ log "Running shutdown post hooks..."; {
     run_hook post.shutdown
 }
 
-# Run 'kpow' to signal to the kernel that we want to reboot or poweroff the
-# system. These will only run when '$1' contains a valid action. When busybox
-# init is used for example, this code is ignored entirely as it handles this
-# itself.
-case $1 in
-    reboot)   kpow r ;;
-    poweroff) kpow p ;;
-esac
+kpow "${0##*/rc.}"

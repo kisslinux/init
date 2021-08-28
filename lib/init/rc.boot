@@ -28,11 +28,11 @@ log "Mounting pseudo filesystems..."; {
 }
 
 log "Loading rc.conf settings..."; {
-    [ -f /etc/rc.conf ] && . /etc/rc.conf
+    load_conf
 }
 
 log "Starting device manager..."; {
-    case ${CONFIG_DEV:=mdev} in
+    case $CONFIG_DEV in
         udevd)
             udevd -d
             udevadm trigger -c add -t subsystems
@@ -108,7 +108,7 @@ log "Loading sysctl settings..."; {
 }
 
 log "Killing device manager to make way for service..."; {
-    case ${CONFIG_DEV:=mdev} in
+    case $CONFIG_DEV in
         udevd)
             udevadm control --exit
         ;;
@@ -135,13 +135,13 @@ IFS=. read -r boot_time _ < /proc/uptime
 log "Boot stage completed in ${boot_time}s..."
 
 log "Replacing rc.boot with service manager..."; {
-    case ${CONFIG_SERVICE:=runit} in
+    case $CONFIG_SERVICE in
         s6)
-            run_exec s6-svscan /var/service
+            run_exec s6-svscan "$CONFIG_SERVICE_DIR"
         ;;
 
         runit)
-            run_exec respawn /usr/bin/runsvdir -P /var/service 'log: ...............................................................................................................................................................................................................................................................'
+            run_exec respawn /usr/bin/runsvdir -P "$CONFIG_SERVICE_DIR" 'log: ...............................................................................................................................................................................................................................................................'
         ;;
     esac
 }
