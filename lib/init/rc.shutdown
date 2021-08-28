@@ -72,8 +72,4 @@ log "Running shutdown post hooks..."; {
     run_hook post.shutdown
 }
 
-case ${0##*/} in
-    *reboot*)   kpow r ;;
-    *poweroff*) kpow p ;;
-    *shutdown*) kpow s ;;
-esac
+kpow "${0##*/rc.}"
