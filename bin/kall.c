@@ -5,41 +5,29 @@
 #include <signal.h>
 #include <stdio.h>
 
-// This is a simple 'killall5' alternative to remove the
-// dependency on a rather unportable and "rare" tool for
-// the purposes of shutting down the machine.
+// This is a simple 'killall5' alternative to remove the dependency on a rather
+// unportable and "rare" tool for the purposes of shutting down the machine.
 int main(int argc, char *argv[]) {
-    struct dirent *ent;
-    DIR *dir;
-    int pid;
-    int sig = SIGTERM;
+    int sig = argc > 1 ? strtoimax(argv[1], 0, 10) : SIGTERM;
+    DIR *dir = opendir("/proc");
 
-    if (argc > 1) {
-        sig = strtoimax(argv[1], 0, 10);
-    }
-
-    dir = opendir("/proc");
-
-    if (!dir) {
-        return 1;
-    }
+    if (!dir) return 1;
 
     kill(-1, SIGSTOP);
 
-    while ((ent = readdir(dir))) {
-        pid = strtoimax(ent->d_name, 0, 10);
+    int pid = getpid();
+    int sid = getsid(pid);
 
-        if (pid < 2 || pid == getpid() ||
-            getsid(pid) == getsid(0) ||
-            getsid(pid) == 0) {
+    for (struct dirent *ent; (ent = readdir(dir)); ) {
+        int p = strtoimax(ent->d_name, 0, 10);
+        int p_sid = getsid(p);
+
+        if (p == 1 || p == pid || p_sid == 0 || p_sid == sid)
             continue;
-        }
 
-        kill(pid, sig);
+        kill(p, sig);
     }
 
     closedir(dir);
     kill(-1, SIGCONT);
-
-    return 0;
 }
