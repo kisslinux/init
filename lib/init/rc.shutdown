@@ -16,12 +16,7 @@ log "Waiting for services to stop..."; {
     : "${CONFIG_SERVICE_DIR:=/var/service}"
 
     case ${CONFIG_SERVICE:=runit} in
-        runit)
-            sv force-shutdown "$CONFIG_SERVICE_DIR/"*
-        ;;
-
         s6)
-
             case $CONFIG_INIT in
                 s6)
                     # If s6 is init s6-svscan will have already done its
@@ -32,6 +27,10 @@ log "Waiting for services to stop..."; {
                     s6-svscanctl -t "$CONFIG_SERVICE_DIR"
                 ;;
             esac
+        ;;
+
+        runit)
+            sv force-shutdown "$CONFIG_SERVICE_DIR/"*
         ;;
     esac
 }
