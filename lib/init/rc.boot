@@ -33,20 +33,24 @@ log "Loading rc.conf settings..."; {
 }
 
 log "Starting device manager..."; {
-    if command -v udevd >/dev/null; then
-        udevd -d
-        udevadm trigger -c add -t subsystems
-        udevadm trigger -c add -t devices
-        udevadm settle
+    case ${CONFIG_DEV:=mdev} in
+        udevd)
+            udevd -d
+            udevadm trigger -c add -t subsystems
+            udevadm trigger -c add -t devices
+            udevadm settle
+        ;;
 
-    elif command -v mdevd >/dev/null; then
-        mdevd & pid_mdevd=$!
-        mdevd-coldplug
+        mdevd)
+            mdevd & pid_mdevd=$!
+            mdevd-coldplug
+        ;;
 
-    elif command -v mdev >/dev/null; then
-        mdev -s
-        mdev -df & pid_mdev=$!
-    fi
+        mdev)
+            mdev -s
+            mdev -df & pid_mdev=$!
+        ;;
+    esac
 }
 
 log "Remounting rootfs as read-only..."; {
@@ -105,17 +109,20 @@ log "Loading sysctl settings..."; {
 }
 
 log "Killing device manager to make way for service..."; {
-    if command -v udevd >/dev/null; then
-        udevadm control --exit
+    case ${CONFIG_DEV:=mdev} in
+        udevd)
+            udevadm control --exit
+        ;;
 
-    elif [ "$pid_mdevd" ]; then
-        kill "$pid_mdevd"
+        mdevd)
+            kill "$pid_mdevd"
+        ;;
 
-    elif [ "$pid_mdev" ]; then
-        kill "$pid_mdev"
-        command -v mdev > /proc/sys/kernel/hotplug
-
-    fi 2>/dev/null
+        mdev)
+            kill "$pid_mdev"
+            command -v mdev > /proc/sys/kernel/hotplug
+        ;;
+    esac
 }
 
 log "Running boot hooks..."; {

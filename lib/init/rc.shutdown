@@ -12,10 +12,6 @@ log "Running shutdown pre hooks..."; {
     run_hook pre.shutdown
 }
 
-log "Waiting for services to stop..."; {
-    sv force-shutdown /var/service/* >/dev/null 2>&1
-}
-
 log "Saving random seed..."; {
     random_seed save
 }
