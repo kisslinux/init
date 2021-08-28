@@ -137,7 +137,16 @@ log "Boot stage completed in ${boot_time}s..."
 log "Replacing rc.boot with service manager..."; {
     case $CONFIG_SERVICE in
         s6)
-            run_exec s6-svscan "$CONFIG_SERVICE_DIR"
+            case $CONFIG_INIT in
+                s6)
+                    # If s6 is init s6-svscan is already PID 1 so attempting to
+                    # launch it again just results in an error message..
+                ;;
+
+                *)
+                    run_exec s6-svscan "$CONFIG_SERVICE_DIR"
+                ;;
+            esac
         ;;
 
         runit)

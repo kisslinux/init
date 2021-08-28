@@ -21,7 +21,17 @@ log "Waiting for services to stop..."; {
         ;;
 
         s6)
-            s6-svscanctl -t "$CONFIG_SERVICE_DIR"
+
+            case $CONFIG_INIT in
+                s6)
+                    # If s6 is init s6-svscan will have already done its
+                    # cleanup routine as it execs into this script.
+                ;;
+
+                *)
+                    s6-svscanctl -t "$CONFIG_SERVICE_DIR"
+                ;;
+            esac
         ;;
     esac
 }
