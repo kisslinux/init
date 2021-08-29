@@ -18,7 +18,9 @@ Tested init systems      Tested service managers      Tested device managers
 * shinit
 
 NOTE: Any combination of the above can be used. If not using a service manager,
-      ensure that you execute at least one getty for login to work.
+      ensure that you execute at least one getty for login to work. Also, some
+      init systems handle what baseinit does internally so support for them
+      here makes little sense.
 
 
 [000] Index
