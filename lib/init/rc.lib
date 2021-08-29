@@ -67,10 +67,9 @@ run_hook() {
 
 run_exec() {
     case $CONFIG_INIT in
-        busybox)
-            # busybox init does not handle signals until this process ends so we
-            # cannot use 'exec' here without breaking the reboot and poweroff
-            # commands.
+        busybox|shinit)
+            # These inits expect the script to eventually exit so we cannot use
+            # exec without breaking poweroff/reboot or the boot process itself.
             setsid "$@" &
         ;;
 

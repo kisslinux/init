@@ -15,6 +15,7 @@ Tested init systems      Tested service managers      Tested device managers
 * s6 (s6-svscan)         * s6                         * mdevd
 * sinit                  * runit                      * udevd
 * runit                  * no service manager         * no device manager
+* shinit
 
 NOTE: Any combination of the above can be used. If not using a service manager,
       ensure that you execute at least one getty for login to work.
