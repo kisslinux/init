@@ -32,8 +32,9 @@ ________________________________________________________________________________
   * /etc/rc.d/*.boot ..................................................... [007]
   * /etc/rc.d/*.pre.shutdown ............................................. [008]
   * /etc/rc.d/*.post.shutdown ............................................ [009]
-* How To Package An Init ................................................. [010]
-* Further Reading ........................................................ [011]
+* Utilities .............................................................. [010]
+* How To Package An Init ................................................. [011]
+* Further Reading ........................................................ [012]
 
 
 [001] /etc/rc.conf
@@ -123,7 +124,19 @@ inits and service managers which use baseinit.
   discern the shutdown type by checking the basename of $0.
 
 
-[010] How To Package An Init
+[010] Utilities
+________________________________________________________________________________
+
+The baseinit package provides three utilities. 'kall' (a small killall5
+implementation), 'kpow' (signal reboot/shutdown to the kernel) and 'respawn'
+(rerun command when it exits/dies).
+
+These are only interesting to those looking to make larger modifications via
+/etc/rc.d. The respawn command should allow those not using a service manager
+to more easily spawn some gettys via /etc/rc.d.
+
+
+[011] How To Package An Init
 ________________________________________________________________________________
 
 To package an init and have it use baseinit set it to run /usr/lib/init/rc.boot
@@ -138,7 +151,7 @@ Last, if the init needs modifications made to baseinit open an issue here or
 open a pull request. This is where CONFIG_INIT comes into play.
 
 
-[011] Further Reading
+[012] Further Reading
 ________________________________________________________________________________
 
 - #/wiki/service-management
