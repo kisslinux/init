@@ -1,9 +1,149 @@
-|/
-|\ISS LINUX                                                https://kisslinux.org
-________________________________________________________________________________
-
-
 Init Framework
 ________________________________________________________________________________
 
-KISS' portable init framework.
+KISS Linux's portable init framework for use with any init, service manager or
+device manager. It handles the boot (and shutdown) process and provides a
+generic interface for controlling it.
+
+The below components have been tested and work. Other software may work out of
+the box as well, it just has not been tested. Send bug reports and support on
+this side will be added where needed.
+
+Tested init systems      Tested service managers      Tested device managers
+
+* busybox init           * busybox runit              * mdev
+* s6 (s6-svscan)         * s6                         * mdevd
+* sinit                  * runit                      * udevd
+* runit                  * no service manager         * no device manager
+
+NOTE: Any combination of the above can be used. If not using a service manager,
+      ensure that you execute at least one getty for login to work.
+
+
+[000] Index
+________________________________________________________________________________
+
+* /etc/rc.conf ........................................................... [001]
+  * CONFIG_INIT .......................................................... [002]
+  * CONFIG_SERVICE ....................................................... [003]
+  * CONFIG_SERVICE_DIR (runit and s6 only) ............................... [004]
+  * CONFIG_DEV ........................................................... [005]
+* /etc/rc.d/ ............................................................. [006]
+  * /etc/rc.d/*.boot ..................................................... [007]
+  * /etc/rc.d/*.pre.shutdown ............................................. [008]
+  * /etc/rc.d/*.post.shutdown ............................................ [009]
+* How To Package An Init ................................................. [010]
+* Further Reading ........................................................ [011]
+
+
+[001] /etc/rc.conf
+________________________________________________________________________________
+
+This file stores configuration for the boot/shutdown process and any scripts in
+/etc/rc.d. [006] If the file does not exist, create it and if any options do not
+exist, create them. If the options are unset (or not present) they take their
+default values.
+
+
+--[002] CONFIG_INIT ------------------------------------------------------------
+
+  The init to assume is in use. This setting does not enable the init but merely
+  tells baseinit which one is in use (so it can handle things accordingly).
+  Valid values are currently 'busybox' (default), 's6', 'sinit'.
+
+  +----------------------------------------------------------------------------+
+  |                                                                            |
+  |  CONFIG_INIT=busybox                                                       |
+  |                                                                            |
+  +----------------------------------------------------------------------------+
+
+
+--[003] CONFIG_SERVICE ---------------------------------------------------------
+
+  The service manager to execute at the end of the boot process. Valid values
+  are currently: 'runit' (default), s6, none. If 'none' is used, baseinit will
+  not start a service manager and it is up to the user to spawn gettys, etc.
+
+  +----------------------------------------------------------------------------+
+  |                                                                            |
+  |  CONFIG_SERVICE=runit                                                      |
+  |                                                                            |
+  +----------------------------------------------------------------------------+
+
+
+--[004] CONFIG_SERVICE_DIR (runit and s6 only) ---------------------------------
+
+  The service directory to use.
+
+  +----------------------------------------------------------------------------+
+  |                                                                            |
+  |  CONVIG_SERVICE_DIR=/var/service                                           |
+  |                                                                            |
+  +----------------------------------------------------------------------------+
+
+
+--[005] CONFIG_DEV -------------------------------------------------------------
+
+  The device manager to run during the init process. This is killed once boot is
+  complete for a supervised version to take its place. Valid values are
+  currently 'mdevd', 'mdev' (default) or 'udevd'.
+
+  +----------------------------------------------------------------------------+
+  |                                                                            |
+  |  CONFIG_DEV=mdev                                                           |
+  |                                                                            |
+  +----------------------------------------------------------------------------+
+
+
+[006] /etc/rc.d/
+________________________________________________________________________________
+
+Shell scripts are sourced from this directory at different stages in the boot
+process based on file name. Any configuration made here will run under all
+inits and service managers which use baseinit.
+
+
+--[007] /etc/rc.d/*.boot -------------------------------------------------------
+
+  Scripts in /etc/rc.d ending in .boot are run at the end of the boot process
+  but before baseinit execs into CONFIG_SERVICE.
+
+
+--[008] /etc/rc.d/*.pre.shutdown -----------------------------------------------
+
+  Scripts in /etc/rc.d ending in .pre.shutdown are run at the start of the
+  shutdown and reboot process. If a script needs to run only on one mode, it can
+  discern the shutdown type by checking the basename of $0.
+
+
+--[009] /etc/rc.d/*.post.shutdown ----------------------------------------------
+
+  Scripts in /etc/rc.d ending in .post.shutdown are run at the end of the
+  shutdown and reboot process. If a script needs to run only on one mode, it can
+  discern the shutdown type by checking the basename of $0.
+
+
+[010] How To Package An Init
+________________________________________________________________________________
+
+To package an init and have it use baseinit set it to run /usr/lib/init/rc.boot
+at power on, /usr/lib/init/rc.shutdown at shutdown and /usr/lib/init/rc.reboot
+at reboot.
+
+Then, the package should provide /usr/bin/init, /usr/bin/poweroff and
+/usr/bin/reboot. This allows the alternatives system to be used and makes
+swapping between things easy.
+
+Last, if the init needs modifications made to baseinit open an issue here or
+open a pull request. This is where CONFIG_INIT comes into play.
+
+
+[011] Further Reading
+________________________________________________________________________________
+
+- #/wiki/service-management
+- #/wiki/pkg/busybox
+- #/wiki/pkg/s6
+- #/wiki/pkg/sinit
+- #/wiki/pkg/baseinit
+

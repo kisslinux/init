@@ -69,4 +69,4 @@ log "Running shutdown post hooks..."; {
     run_hook post.shutdown
 }
 
-kpow "${0##*/rc.}"
+kpow "${1:-${0##*/rc.}}"
