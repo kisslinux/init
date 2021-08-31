@@ -31,6 +31,10 @@ log "Loading rc.conf settings..."; {
     load_conf
 }
 
+log "Running boot pre hooks..."; {
+    run_hook pre.boot
+}
+
 log "Starting device manager..."; {
     case $CONFIG_DEV in
         udevd)

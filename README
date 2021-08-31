@@ -32,12 +32,13 @@ ________________________________________________________________________________
   * CONFIG_SERVICE_DIR (runit and s6 only) ............................... [004]
   * CONFIG_DEV ........................................................... [005]
 * /etc/rc.d/ ............................................................. [006]
-  * /etc/rc.d/*.boot ..................................................... [007]
-  * /etc/rc.d/*.pre.shutdown ............................................. [008]
-  * /etc/rc.d/*.post.shutdown ............................................ [009]
-* Utilities .............................................................. [010]
-* How To Package An Init ................................................. [011]
-* Further Reading ........................................................ [012]
+  * /etc/rc.d/*.pre.boot ................................................. [007]
+  * /etc/rc.d/*.post.boot ................................................ [008]
+  * /etc/rc.d/*.pre.shutdown ............................................. [009]
+  * /etc/rc.d/*.post.shutdown ............................................ [010]
+* Utilities .............................................................. [011]
+* How To Package An Init ................................................. [012]
+* Further Reading ........................................................ [013]
 
 
 [001] /etc/rc.conf
@@ -107,27 +108,33 @@ process based on file name. Any configuration made here will run under all
 inits and service managers which use baseinit.
 
 
---[007] /etc/rc.d/*.boot -------------------------------------------------------
+--[007] /etc/rc.d/*.pre.boot ---------------------------------------------------
+
+  Scripts in /etc/rc.d ending in .pre.boot are run at the start of the boot
+  process but after pseudo filesystems are mounted (/sys, /dev, etc).
+
+
+--[008] /etc/rc.d/*.post.boot --------------------------------------------------
 
   Scripts in /etc/rc.d ending in .boot are run at the end of the boot process
   but before baseinit execs into CONFIG_SERVICE.
 
 
---[008] /etc/rc.d/*.pre.shutdown -----------------------------------------------
+--[009] /etc/rc.d/*.pre.shutdown -----------------------------------------------
 
   Scripts in /etc/rc.d ending in .pre.shutdown are run at the start of the
   shutdown and reboot process. If a script needs to run only on one mode, it can
   discern the shutdown type by checking the basename of $0.
 
 
---[009] /etc/rc.d/*.post.shutdown ----------------------------------------------
+--[010] /etc/rc.d/*.post.shutdown ----------------------------------------------
 
   Scripts in /etc/rc.d ending in .post.shutdown are run at the end of the
   shutdown and reboot process. If a script needs to run only on one mode, it can
   discern the shutdown type by checking the basename of $0.
 
 
-[010] Utilities
+[011] Utilities
 ________________________________________________________________________________
 
 The baseinit package provides three utilities. 'kall' (a small killall5
@@ -139,7 +146,7 @@ These are only interesting to those looking to make larger modifications via
 to more easily spawn some gettys via /etc/rc.d.
 
 
-[011] How To Package An Init
+[012] How To Package An Init
 ________________________________________________________________________________
 
 To package an init and have it use baseinit set it to run /usr/lib/init/rc.boot
@@ -154,7 +161,7 @@ Last, if the init needs modifications made to baseinit open an issue here or
 open a pull request. This is where CONFIG_INIT comes into play.
 
 
-[012] Further Reading
+[013] Further Reading
 ________________________________________________________________________________
 
 - #/wiki/service-management
