@@ -128,8 +128,9 @@ log "Killing device manager to make way for service..."; {
     esac
 }
 
-log "Running boot hooks..."; {
+log "Running post boot hooks..."; {
     run_hook boot
+    run_hook post.boot
 }
 
 # Calculate how long the boot process took to
