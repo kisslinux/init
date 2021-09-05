@@ -138,9 +138,8 @@ inits and service managers which use baseinit.
 [011] Utilities
 ________________________________________________________________________________
 
-The baseinit package provides three utilities. 'kall' (a small killall5
-implementation), 'kpow' (signal reboot/shutdown to the kernel) and 'respawn'
-(rerun command when it exits/dies).
+The baseinit package provides two utilities. 'kpow' (signal reboot/shutdown to
+the kernel) and 'respawn' (rerun command when it exits/dies).
 
 These are only interesting to those looking to make larger modifications via
 /etc/rc.d. The respawn command should allow those not using a service manager
