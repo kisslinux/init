@@ -38,12 +38,10 @@ log "Saving random seed..."; {
 }
 
 log "Sending TERM signal to all processes..."; {
-    kall 15
+    kill -s TERM -1
+    log "Sending KILL signal to all processes..."
     sleep 2
-}
-
-log "Sending KILL signal to all processes..."; {
-    kall 9
+    kill -s KILL -1
 }
 
 log "Unmounting filesystems and disabling swap..."; {
