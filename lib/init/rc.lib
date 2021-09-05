@@ -157,7 +157,8 @@ random_seed() {
                 return 1
             }
 
-            dd count=1 bs=512 if=/dev/urandom of="$seed" >/dev/null 2>&1
+            dd count=1 bs=512 if=/dev/urandom of="$seed" ||
+                log "Warning: Failed to seed random"
         ;;
 
         load)
