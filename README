@@ -54,7 +54,8 @@ default values.
 
   The init to assume is in use. This setting does not enable the init but merely
   tells baseinit which one is in use (so it can handle things accordingly).
-  Valid values are currently 'busybox' (default), 's6', 'sinit'.
+  Valid values are currently 'busybox' (default), 's6', 'sinit', 'runit',
+  'shinit'.
 
   +----------------------------------------------------------------------------+
   |                                                                            |
